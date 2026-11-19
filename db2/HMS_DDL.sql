@@ -1,0 +1,287 @@
+-- ============================================================
+-- HMS - HOSPITAL MANAGEMENT SYSTEM
+-- IBM Db2 13 for z/OS DDL Schema
+-- Location: ZXPDB2 | Subsystem: DBDG | Database: Z72385
+-- Storage Group: ZXPUSER | Schema: Z72385
+-- Dataset Copy: Z72385.CP.DDL(HMSDDL)
+-- ============================================================
+
+-- ============================================================
+-- TABLE: Z72385.HMS_PATIENTS
+-- ============================================================
+CREATE TABLE Z72385.HMS_PATIENTS (
+    PATIENT_ID    INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    PAT_NAME      VARCHAR(255)   NOT NULL,
+    PAT_AGE       SMALLINT       NOT NULL,
+    PAT_GENDER    VARCHAR(10)    NOT NULL,
+    PAT_CONTACT   VARCHAR(20)    NOT NULL,
+    PAT_EMAIL     VARCHAR(255)   NOT NULL,
+    PAT_PASSWORD  VARCHAR(255)   NOT NULL,
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_PAT  PRIMARY KEY (PATIENT_ID),
+    CONSTRAINT UQ_PAT_MAIL UNIQUE (PAT_EMAIL),
+    CONSTRAINT CK_PAT_GEND CHECK (PAT_GENDER IN ('Male', 'Female', 'Other')),
+    CONSTRAINT CK_PAT_AGE  CHECK (PAT_AGE BETWEEN 1 AND 120)
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_DOCTORS
+-- ============================================================
+CREATE TABLE Z72385.HMS_DOCTORS (
+    DOCTOR_ID     INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    DOC_NAME      VARCHAR(255)   NOT NULL,
+    SPECIALIZ     VARCHAR(100)   NOT NULL,
+    DOC_EMAIL     VARCHAR(255)   NOT NULL,
+    DOC_PASSWORD  VARCHAR(255)   NOT NULL,
+    DEPARTMENT    VARCHAR(100)   NOT NULL,
+    DOC_CONTACT   VARCHAR(20)    NOT NULL,
+    DOC_STATUS    VARCHAR(10)    NOT NULL WITH DEFAULT 'ACTIVE',
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_DOC  PRIMARY KEY (DOCTOR_ID),
+    CONSTRAINT UQ_DOC_MAIL UNIQUE (DOC_EMAIL),
+    CONSTRAINT CK_DOC_STAT CHECK (DOC_STATUS IN ('ACTIVE', 'INACTIVE'))
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_ADMIN
+-- ============================================================
+CREATE TABLE Z72385.HMS_ADMIN (
+    ADMIN_ID      INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1),
+    ADM_USERNAME  VARCHAR(100)   NOT NULL,
+    ADM_PASSWORD  VARCHAR(255)   NOT NULL,
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_ADM  PRIMARY KEY (ADMIN_ID),
+    CONSTRAINT UQ_ADM_USER UNIQUE (ADM_USERNAME)
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_APPOINTMENTS
+-- ============================================================
+CREATE TABLE Z72385.HMS_APPOINTMENTS (
+    APPT_ID       INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    PATIENT_ID    INTEGER        NOT NULL,
+    DOCTOR_ID     INTEGER        NOT NULL,
+    APPT_DATE     DATE           NOT NULL,
+    APPT_TIME     TIME           NOT NULL,
+    APPT_STATUS   VARCHAR(15)    NOT NULL WITH DEFAULT 'SCHEDULED',
+    APPT_NOTES    VARCHAR(500),
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_APT  PRIMARY KEY (APPT_ID),
+    CONSTRAINT FK_APT_PAT  FOREIGN KEY (PATIENT_ID)
+                           REFERENCES Z72385.HMS_PATIENTS(PATIENT_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT FK_APT_DOC  FOREIGN KEY (DOCTOR_ID)
+                           REFERENCES Z72385.HMS_DOCTORS(DOCTOR_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT CK_APT_STAT CHECK (APPT_STATUS IN
+                           ('SCHEDULED', 'COMPLETED', 'CANCELLED'))
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_PRESCRIPTIONS
+-- ============================================================
+CREATE TABLE Z72385.HMS_PRESCRIPTIONS (
+    PRESC_ID      INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    APPT_ID       INTEGER        NOT NULL,
+    PATIENT_ID    INTEGER        NOT NULL,
+    DOCTOR_ID     INTEGER        NOT NULL,
+    MEDICINE      VARCHAR(255)   NOT NULL,
+    DOSAGE        VARCHAR(100)   NOT NULL,
+    DURATION      VARCHAR(100)   NOT NULL,
+    DIAGNOSIS     VARCHAR(500),
+    PRESC_NOTES   VARCHAR(500),
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_PRX  PRIMARY KEY (PRESC_ID),
+    CONSTRAINT FK_PRX_APT  FOREIGN KEY (APPT_ID)
+                           REFERENCES Z72385.HMS_APPOINTMENTS(APPT_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT FK_PRX_PAT  FOREIGN KEY (PATIENT_ID)
+                           REFERENCES Z72385.HMS_PATIENTS(PATIENT_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT FK_PRX_DOC  FOREIGN KEY (DOCTOR_ID)
+                           REFERENCES Z72385.HMS_DOCTORS(DOCTOR_ID)
+                           ON DELETE RESTRICT
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_WARDS
+-- ============================================================
+CREATE TABLE Z72385.HMS_WARDS (
+    WARD_ID       INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1),
+    WARD_TYPE     VARCHAR(50)    NOT NULL,
+    TOTAL_BEDS    SMALLINT       NOT NULL,
+    OCCPD_BEDS    SMALLINT       NOT NULL WITH DEFAULT 0,
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_WRD  PRIMARY KEY (WARD_ID),
+    CONSTRAINT CK_HMS_BEDS CHECK (OCCPD_BEDS >= 0 AND OCCPD_BEDS <= TOTAL_BEDS)
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_STAFF
+-- ============================================================
+CREATE TABLE Z72385.HMS_STAFF (
+    STAFF_ID      INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    STF_NAME      VARCHAR(255)   NOT NULL,
+    STF_ROLE      VARCHAR(100)   NOT NULL,
+    STF_CONTACT   VARCHAR(20)    NOT NULL,
+    STF_EMAIL     VARCHAR(255),
+    STF_DEPT      VARCHAR(100),
+    STF_STATUS    VARCHAR(10)    NOT NULL WITH DEFAULT 'ACTIVE',
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_STF  PRIMARY KEY (STAFF_ID),
+    CONSTRAINT CK_STF_STAT CHECK (STF_STATUS IN ('ACTIVE', 'INACTIVE'))
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_BILLING
+-- ============================================================
+CREATE TABLE Z72385.HMS_BILLING (
+    BILL_ID       INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    PATIENT_ID    INTEGER        NOT NULL,
+    AMOUNT        DECIMAL(10,2)  NOT NULL,
+    BILL_STATUS   VARCHAR(10)    NOT NULL WITH DEFAULT 'PENDING',
+    DESCRIPTION   VARCHAR(500),
+    PAYMENT_DATE  DATE,
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_BIL  PRIMARY KEY (BILL_ID),
+    CONSTRAINT FK_BIL_PAT  FOREIGN KEY (PATIENT_ID)
+                           REFERENCES Z72385.HMS_PATIENTS(PATIENT_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT CK_BIL_STAT CHECK (
+        BILL_STATUS IN ('PENDING', 'PAID', 'CANCELLED'))
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- TABLE: Z72385.HMS_FEEDBACK
+-- ============================================================
+CREATE TABLE Z72385.HMS_FEEDBACK (
+    FDBK_ID       INTEGER        NOT NULL GENERATED ALWAYS AS IDENTITY
+                                   (START WITH 1 INCREMENT BY 1 CACHE 20),
+    PATIENT_ID    INTEGER        NOT NULL,
+    FDBK_MESSAGE  VARCHAR(2000)  NOT NULL,
+    FDBK_DATE     DATE           NOT NULL,
+    FDBK_STATUS   VARCHAR(10)    NOT NULL WITH DEFAULT 'UNREAD',
+    CREATED_AT    TIMESTAMP      NOT NULL WITH DEFAULT,
+    CONSTRAINT PK_HMS_FBK  PRIMARY KEY (FDBK_ID),
+    CONSTRAINT FK_FBK_PAT  FOREIGN KEY (PATIENT_ID)
+                           REFERENCES Z72385.HMS_PATIENTS(PATIENT_ID)
+                           ON DELETE RESTRICT,
+    CONSTRAINT CK_FBK_STAT CHECK (FDBK_STATUS IN ('UNREAD', 'READ'))
+) IN DATABASE Z72385;
+
+-- ============================================================
+-- SECONDARY INDEXES (STOGROUP ZXPUSER)
+-- ============================================================
+CREATE INDEX Z72385.XDOC_STAT ON Z72385.HMS_DOCTORS (DOC_STATUS)
+    USING STOGROUP ZXPUSER;
+CREATE INDEX Z72385.XAPT_PAT
+    ON Z72385.HMS_APPOINTMENTS (PATIENT_ID, APPT_DATE DESC)
+    USING STOGROUP ZXPUSER;
+CREATE INDEX Z72385.XAPT_DOC
+    ON Z72385.HMS_APPOINTMENTS (DOCTOR_ID, APPT_DATE DESC)
+    USING STOGROUP ZXPUSER;
+CREATE INDEX Z72385.XPRX_PAT  ON Z72385.HMS_PRESCRIPTIONS (PATIENT_ID)
+    USING STOGROUP ZXPUSER;
+CREATE INDEX Z72385.XBIL_PAT  ON Z72385.HMS_BILLING (PATIENT_ID, BILL_STATUS)
+    USING STOGROUP ZXPUSER;
+
+-- ============================================================
+-- VIEWS
+-- ============================================================
+CREATE VIEW Z72385.V_HMS_APPT_DETAIL AS
+    SELECT
+        A.APPT_ID,
+        A.PATIENT_ID,
+        A.DOCTOR_ID,
+        A.APPT_DATE,
+        A.APPT_TIME,
+        A.APPT_STATUS,
+        A.APPT_NOTES,
+        P.PAT_NAME    AS PATIENT_NAME,
+        P.PAT_AGE     AS PATIENT_AGE,
+        P.PAT_CONTACT AS PAT_CONTACT,
+        D.DOC_NAME    AS DOCTOR_NAME,
+        D.SPECIALIZ   AS SPECIALIZATION
+    FROM Z72385.HMS_APPOINTMENTS A
+    JOIN Z72385.HMS_PATIENTS P ON A.PATIENT_ID = P.PATIENT_ID
+    JOIN Z72385.HMS_DOCTORS  D ON A.DOCTOR_ID  = D.DOCTOR_ID;
+
+CREATE VIEW Z72385.V_HMS_PRESC_DETAIL AS
+    SELECT
+        PR.PRESC_ID,
+        PR.APPT_ID,
+        PR.PATIENT_ID,
+        PR.DOCTOR_ID,
+        PR.MEDICINE,
+        PR.DOSAGE,
+        PR.DURATION,
+        PR.DIAGNOSIS,
+        PR.PRESC_NOTES,
+        PR.CREATED_AT,
+        D.DOC_NAME   AS DOCTOR_NAME,
+        A.APPT_DATE  AS APPOINTMENT_DATE,
+        A.APPT_TIME  AS APPOINTMENT_TIME
+    FROM Z72385.HMS_PRESCRIPTIONS PR
+    JOIN Z72385.HMS_DOCTORS      D ON PR.DOCTOR_ID = D.DOCTOR_ID
+    JOIN Z72385.HMS_APPOINTMENTS A ON PR.APPT_ID   = A.APPT_ID;
+
+CREATE VIEW Z72385.V_HMS_FDBK_DETAIL AS
+    SELECT
+        F.FDBK_ID,
+        F.PATIENT_ID,
+        F.FDBK_MESSAGE,
+        F.FDBK_DATE,
+        F.FDBK_STATUS,
+        F.CREATED_AT,
+        P.PAT_NAME AS PATIENT_NAME
+    FROM Z72385.HMS_FEEDBACK F
+    JOIN Z72385.HMS_PATIENTS P ON F.PATIENT_ID = P.PATIENT_ID;
+
+-- ============================================================
+-- INITIAL SEED DATA
+-- ============================================================
+INSERT INTO Z72385.HMS_ADMIN (ADM_USERNAME, ADM_PASSWORD)
+    VALUES ('admin', 'admin123');
+
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('ICU', 20, 5);
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('GENERAL', 50, 15);
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('EMERGENCY', 30, 10);
+
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Sarah Johnson', 'Cardiology', 'sarah@hospital.com',
+            'doc123', 'Cardiology', '555-0101');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Michael Chen', 'Orthopedics', 'michael@hospital.com',
+            'doc123', 'Orthopedics', '555-0102');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Emily Rodriguez', 'Neurology', 'emily@hospital.com',
+            'doc123', 'Neurology', '555-0103');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. James Wilson', 'Pediatrics', 'james@hospital.com',
+            'doc123', 'Pediatrics', '555-0104');
+
+INSERT INTO Z72385.HMS_PATIENTS
+    (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
+    VALUES ('John Doe', 35, 'Male', '555-1234', 'john@email.com', 'patient123');
+
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('Alice Brown', 'Nurse', '555-2001', 'Cardiology');
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('Bob Smith', 'Nurse', '555-2002', 'Emergency');
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('Carol Davis', 'Receptionist', '555-2003', 'Reception');

@@ -1,0 +1,27 @@
+{
+  "name": "hms-mainframe",
+  "version": "2.1.0",
+  "description": "Hospital Management System - IBM Mainframe Edition (Live Online Db2 13 for z/OS + COBOL + JCL)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "init-db2": "node db2/init_db2.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  },
+  "keywords": [
+    "mainframe",
+    "COBOL",
+    "DB2",
+    "JCL",
+    "hospital-management",
+    "IBM-zOS",
+    "enterprise"
+  ],
+  "author": "HMS Team - VIT University"
+}
