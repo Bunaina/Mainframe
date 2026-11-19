@@ -29,8 +29,9 @@ foreach ($ds in $pdsList) {
 }
 
 $uploads = @(
-    @((Join-Path $root "db2\HMS_DDL.sql"),    "$zosUser.CP.DDL(HMSDDL)"),
-    @((Join-Path $root "db2\VIEWALL.sql"),    "$zosUser.CP.SQL(VIEWALL)"),
+    @((Join-Path $root "db2\HMS_DDL.sql"),             "$zosUser.CP.DDL(HMSDDL)"),
+    @((Join-Path $root "db2\HMS_RLS_PERMISSIONS.sql"), "$zosUser.CP.DDL(HMSRLS)"),
+    @((Join-Path $root "db2\VIEWALL.sql"),             "$zosUser.CP.SQL(VIEWALL)"),
     @((Join-Path $root "cobol\HMSAUTH.cbl"),  "$zosUser.CP.COBOL(HMSAUTH)"),
     @((Join-Path $root "cobol\HMSAPPT.cbl"),  "$zosUser.CP.COBOL(HMSAPPT)"),
     @((Join-Path $root "cobol\HMSADMIN.cbl"), "$zosUser.CP.COBOL(HMSADMIN)"),

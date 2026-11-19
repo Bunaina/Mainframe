@@ -5,195 +5,372 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Admin Panel — HealthCare+ Mainframe HMS">
     <title>Admin Dashboard — HealthCare+ | IBM Mainframe HMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #050a15; color: #e2e8f0; }
-        .nav-bar { background: #0a0f25; border-bottom: 2px solid rgba(234,179,8,0.3); }
-        .card { background: #0f172a; border: 1px solid rgba(234,179,8,0.1); border-radius: 1rem; }
-        .card-hover { transition: border-color 0.2s, transform 0.2s; }
-        .card-hover:hover { border-color: rgba(234,179,8,0.4); transform: translateY(-2px); }
-        .tab-btn { color: #94a3b8; border-bottom: 2px solid transparent; transition: all 0.2s; }
-        .tab-btn.active { color: #facc15; border-color: #ca8a04; }
-        .stat-card { background: linear-gradient(135deg, #0f172a, #0a0f25); border: 1px solid rgba(234,179,8,0.15); border-radius: 1rem; }
-        .form-input { background: rgba(255,255,255,0.05); border: 1px solid rgba(234,179,8,0.2); color: #e2e8f0; border-radius: 0.75rem; }
-        .form-input:focus { outline: none; border-color: #ca8a04; box-shadow: 0 0 0 3px rgba(202,138,4,0.15); }
-        .form-input option { background: #0f172a; }
-        .btn-primary { background: linear-gradient(135deg, #ca8a04, #a16207); color: white; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-danger { background: #dc2626; color: white; border-radius: 0.75rem; font-weight: 600; transition: all 0.2s; }
-        .progress-bar { background: rgba(234,179,8,0.15); border-radius: 9999px; height: 8px; }
-        .progress-fill { background: linear-gradient(90deg, #ca8a04, #facc15); border-radius: 9999px; height: 8px; transition: width 0.8s ease; }
-        .mf-tag { font-size: 0.65rem; font-family: monospace; color: #ca8a04; background: rgba(202,138,4,0.1); border: 1px solid rgba(202,138,4,0.2); border-radius: 0.375rem; padding: 1px 6px; }
-        .badge-unread { background: rgba(234,179,8,0.2); color: #fde047; border: 1px solid rgba(234,179,8,0.3); }
-        .badge-read { background: rgba(100,116,139,0.2); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f8fafc; color: #0f172a; }
+        .nav-bar { background: #ffffff; border-bottom: 1px solid #e2e8f0; }
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03); }
+        .card-hover { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+        .card-hover:hover { border-color: #93c5fd; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.06); }
+        .tab-btn { color: #64748b; border-bottom: 2px solid transparent; font-weight: 500; transition: all 0.15s ease; }
+        .tab-btn:hover { color: #1e293b; }
+        .tab-btn.active { color: #1d4ed8; border-color: #1d4ed8; font-weight: 600; }
+        .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.5rem; }
+        .form-input { background: #ffffff; border: 1px solid #cbd5e1; color: #0f172a; border-radius: 0.375rem; }
+        .form-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+        .btn-primary { background: #1d4ed8; color: #ffffff; border-radius: 0.375rem; font-weight: 600; transition: background 0.15s ease; }
+        .btn-primary:hover { background: #1e40af; }
+        .btn-danger { background: #ffffff; color: #dc2626; border: 1px solid #fecaca; border-radius: 0.375rem; font-weight: 600; transition: all 0.15s ease; }
+        .btn-danger:hover { background: #fef2f2; border-color: #f87171; }
+        .progress-bar { background: #f1f5f9; border-radius: 9999px; height: 7px; overflow: hidden; }
+        .progress-fill { border-radius: 9999px; height: 7px; transition: width 0.6s ease; }
+        .mf-tag { font-size: 0.7rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #1d4ed8; background: #eff6ff; border: 1px solid #dbeafe; border-radius: 0.25rem; padding: 1px 6px; }
+        .badge-unread { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+        .badge-read { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
     </style>
 </head>
-<body>
-    <!-- Navigation -->
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation Bar -->
     <nav class="nav-bar sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-6 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="text-xl font-extrabold bg-gradient-to-r from-yellow-400 to-amber-400 bg-clip-text text-transparent">🏥 HealthCare+</span>
-                <span class="text-slate-600 text-sm">|</span>
-                <span class="text-slate-300 text-sm font-medium">Admin Panel</span>
-                <span class="mf-tag">HMSADMIN.cbl</span>
+                <div class="w-9 h-9 rounded-md bg-blue-600 flex items-center justify-center text-white text-lg font-bold">
+                    +
+                </div>
+                <div>
+                    <span class="text-lg font-bold text-slate-900 tracking-tight">HealthCare+</span>
+                    <span class="text-xs text-slate-500 font-medium ml-1.5">Admin Management</span>
+                </div>
             </div>
             <div class="flex items-center gap-4">
-                <span id="userName" class="text-slate-300 font-semibold text-sm"></span>
-                <button onclick="logout()" class="btn-danger px-4 py-2 text-sm">Logout</button>
+                <span class="text-xs text-slate-500">Logged in as: <strong id="userName" class="text-slate-800">Admin</strong></span>
+                <button onclick="logout()" class="btn-danger px-3.5 py-1.5 text-xs">Sign Out</button>
             </div>
         </div>
     </nav>
 
-    <div class="container mx-auto px-6 py-8">
-        <!-- Tab Navigation -->
-        <div class="mb-8 flex flex-wrap gap-1 border-b border-slate-800">
-            <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn active px-6 py-3 font-semibold text-sm">📊 Dashboard</button>
-            <button onclick="showTab('wards')" id="tab-wards" class="tab-btn px-6 py-3 font-semibold text-sm">🛏️ Wards</button>
-            <button onclick="showTab('staff')" id="tab-staff" class="tab-btn px-6 py-3 font-semibold text-sm">👥 Staff</button>
-            <button onclick="showTab('doctors')" id="tab-doctors" class="tab-btn px-6 py-3 font-semibold text-sm">👨‍⚕️ Doctors</button>
-            <button onclick="showTab('feedback')" id="tab-feedback" class="tab-btn px-6 py-3 font-semibold text-sm">💬 Feedback</button>
+    <div class="container mx-auto px-6 py-6 flex-1">
+        <!-- Navigation Tabs -->
+        <div class="mb-6 flex flex-wrap gap-2 border-b border-slate-200">
+            <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-btn active px-5 py-2.5 text-sm">Dashboard Overview</button>
+            <button onclick="showTab('wards')" id="tab-wards" class="tab-btn px-5 py-2.5 text-sm">Ward Occupancy</button>
+            <button onclick="showTab('doctors')" id="tab-doctors" class="tab-btn px-5 py-2.5 text-sm">Doctors &amp; Onboarding</button>
+            <button onclick="showTab('staff')" id="tab-staff" class="tab-btn px-5 py-2.5 text-sm">Hospital Staff</button>
+            <button onclick="showTab('feedback')" id="tab-feedback" class="tab-btn px-5 py-2.5 text-sm">Patient Feedback</button>
+            <button onclick="showTab('rls')" id="tab-rls" class="tab-btn px-5 py-2.5 text-sm">Data Privacy &amp; Access Control</button>
         </div>
 
-        <!-- Dashboard Tab -->
+        <!-- 1. Dashboard Tab -->
         <div id="content-dashboard" class="tab-content">
-            <h2 class="text-3xl font-bold mb-2">Hospital Overview</h2>
-            <p class="text-slate-400 text-sm mb-8 font-mono">COBOL: GET-ADMIN-STATS-PARA → HMS.PATIENTS, HMS.DOCTORS, HMS.APPOINTMENTS, HMS.WARDS (DB2)</p>
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-slate-900">Hospital Operational Overview</h1>
+                <p class="text-xs text-slate-500 mt-1">Real-time clinical metrics, inpatient capacity, and personnel directories</p>
+            </div>
 
             <!-- Stats Grid -->
-            <div class="grid md:grid-cols-4 gap-6 mb-8">
-                <div class="stat-card p-6 card-hover">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-xl">👥</div>
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div class="stat-card p-5 card-hover">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl shrink-0">👥</div>
                         <div>
-                            <p class="text-slate-400 text-xs">Total Patients</p>
-                            <p id="totalPatients" class="text-3xl font-extrabold text-blue-400">0</p>
+                            <p class="text-slate-500 text-xs font-medium">Registered Patients</p>
+                            <p id="totalPatients" class="text-2xl font-bold text-slate-900 mt-0.5">0</p>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card p-6 card-hover">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-xl">👩‍⚕️</div>
+                <div class="stat-card p-5 card-hover">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl shrink-0">👨‍⚕️</div>
                         <div>
-                            <p class="text-slate-400 text-xs">Active Doctors</p>
-                            <p id="totalDoctors" class="text-3xl font-extrabold text-emerald-400">0</p>
+                            <p class="text-slate-500 text-xs font-medium">Active Doctors</p>
+                            <p id="totalDoctors" class="text-2xl font-bold text-slate-900 mt-0.5">0</p>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card p-6 card-hover">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center text-xl">📅</div>
+                <div class="stat-card p-5 card-hover">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center text-xl shrink-0">📅</div>
                         <div>
-                            <p class="text-slate-400 text-xs">Today's Appointments</p>
-                            <p id="todayAppointments" class="text-3xl font-extrabold text-violet-400">0</p>
+                            <p class="text-slate-500 text-xs font-medium">Today's Appointments</p>
+                            <p id="todayAppointments" class="text-2xl font-bold text-slate-900 mt-0.5">0</p>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card p-6 card-hover">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-xl">🏥</div>
+                <div class="stat-card p-5 card-hover">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center text-xl shrink-0">🏥</div>
                         <div>
-                            <p class="text-slate-400 text-xs">ICU Occupancy</p>
-                            <p id="icuOccupancy" class="text-3xl font-extrabold text-red-400">0%</p>
+                            <p class="text-slate-500 text-xs font-medium">ICU Occupancy</p>
+                            <p id="icuOccupancy" class="text-2xl font-bold text-slate-900 mt-0.5">0%</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Ward Status -->
-            <div class="card p-6">
-                <h3 class="text-lg font-bold mb-5 text-slate-200">Ward Status</h3>
-                <div id="wardStats" class="space-y-5">
-                    <p class="text-slate-500">Loading ward data...</p>
+            <!-- Ward Occupancy Overview in Dashboard -->
+            <div class="card p-6 mb-6">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="text-base font-bold text-slate-900">Ward Capacity &amp; Occupancy</h2>
+                    <span class="mf-tag">Table: Z72385.HMS_WARDS</span>
+                </div>
+                <div id="wardStats" class="space-y-4">
+                    <p class="text-slate-400 text-sm">Loading ward data...</p>
                 </div>
             </div>
 
-            <!-- Mainframe info panel -->
-            <div class="mt-6 card p-4">
-                <p class="text-xs text-slate-500 font-mono">
-                    JCL: <span class="text-yellow-400">HMSBATCH.jcl STEP040</span> → RUNSTATS on HMS.APPTSPC, HMS.PATTSPC | 
-                    Backup: <span class="text-yellow-400">STEP050</span> → IMAGE COPY to tape cartridge (nightly 23:00)
-                </p>
+            <!-- Mainframe Batch Info Box -->
+            <div class="card p-4 bg-slate-50/50 border-slate-200">
+                <div class="flex items-start gap-3">
+                    <span class="text-base">🏥</span>
+                    <div class="text-xs text-slate-600 leading-relaxed">
+                        <strong>Hospital Operations Notice:</strong>
+                        Departmental census, patient discharges, ward occupancy, and clinical rosters are reconciled continuously across all specialty care units.
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Ward Management Tab -->
+        <!-- 2. Wards Tab -->
         <div id="content-wards" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-2">Ward Management</h2>
-            <p class="text-slate-400 text-sm mb-6 font-mono">COBOL: UPDATE-WARD-PARA → HMS.WARDS (DB2)</p>
-            <div id="wardsList" class="space-y-4">
-                <p class="text-slate-500">Loading wards...</p>
+            <div class="mb-5">
+                <h1 class="text-2xl font-bold text-slate-900">Ward Capacity Management</h1>
+                <p class="text-xs text-slate-500">Real-time bed occupancy across intensive care, surgical, and general wards</p>
+            </div>
+            <div id="wardsList" class="space-y-3">
+                <p class="text-slate-400 text-sm">Loading wards...</p>
             </div>
         </div>
 
-        <!-- Staff Management Tab -->
-        <div id="content-staff" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-2">Staff Management</h2>
-            <p class="text-slate-400 text-sm mb-6 font-mono">COBOL: GET-STAFF-PARA, ADD-STAFF-PARA → HMS.STAFF (DB2)</p>
+        <!-- 3. Doctors Tab (With Add Doctor Form) -->
+        <div id="content-doctors" class="tab-content hidden">
+            <div class="mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Doctor Directory &amp; Staffing</h1>
+                    <p class="text-xs text-slate-500">Manage physician credentials, department assignments, and onboarding</p>
+                </div>
+            </div>
 
-            <div class="card p-6 mb-6 max-w-2xl">
-                <h3 class="text-lg font-bold mb-5 text-slate-200">Add New Staff Member</h3>
-                <form onsubmit="addStaff(event)" class="grid md:grid-cols-2 gap-4">
+            <!-- Add New Doctor Card -->
+            <div class="card p-6 mb-6">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="text-blue-700 font-bold text-base">＋</span>
+                        <h2 class="text-base font-bold text-slate-900">Onboard New Doctor</h2>
+                    </div>
+                </div>
+                <form onsubmit="addDoctor(event)" class="grid md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Name</label>
-                        <input type="text" id="staffName" required class="form-input w-full px-4 py-3">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Doctor Full Name</label>
+                        <input type="text" id="docName" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="Dr. Arthur Vance">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Role</label>
-                        <select id="staffRole" required class="form-input w-full px-4 py-3">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Specialization</label>
+                        <input type="text" id="docSpec" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="e.g. Cardiology, Neurology">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Department</label>
+                        <input type="text" id="docDept" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="e.g. Cardiology">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Contact Phone</label>
+                        <input type="tel" id="docContact" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="555-0120">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Official Email</label>
+                        <input type="email" id="docEmail" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="arthur@hospital.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Initial Temporary Password</label>
+                        <input type="password" id="docPassword" required minlength="6" class="form-input w-full px-3.5 py-2 text-sm" placeholder="••••••••">
+                    </div>
+                    <div class="md:col-span-3 flex justify-end">
+                        <button type="submit" id="add-doctor-btn" class="btn-primary px-6 py-2.5 text-sm shadow-sm">
+                            Onboard Doctor
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Doctor Directory Grid -->
+            <div class="card p-6">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="text-base font-bold text-slate-900">Current Medical Faculty</h2>
+                    <span id="docCountBadge" class="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">Loading...</span>
+                </div>
+                <div id="doctorsList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    <p class="text-slate-400 text-sm">Loading doctors list...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Staff Tab -->
+        <div id="content-staff" class="tab-content hidden">
+            <div class="mb-5">
+                <h1 class="text-2xl font-bold text-slate-900">Hospital Staff Management</h1>
+                <p class="text-xs text-slate-500">Nursing, pharmacy, clinical laboratory, and operational personnel</p>
+            </div>
+
+            <div class="card p-6 mb-6">
+                <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                    <span class="text-blue-700 font-bold text-base">＋</span>
+                    <h2 class="text-base font-bold text-slate-900">Add Staff Member</h2>
+                </div>
+                <form onsubmit="addStaff(event)" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+                        <input type="text" id="staffName" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="David Miller">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Role</label>
+                        <select id="staffRole" required class="form-input w-full px-3.5 py-2 text-sm">
                             <option value="">Select Role</option>
                             <option value="Nurse">Nurse</option>
+                            <option value="Head Nurse">Head Nurse</option>
                             <option value="Receptionist">Receptionist</option>
                             <option value="Pharmacist">Pharmacist</option>
                             <option value="Lab Technician">Lab Technician</option>
-                            <option value="Cleaner">Cleaner</option>
+                            <option value="Radiologic Tech">Radiologic Tech</option>
+                            <option value="Billing Specialist">Billing Specialist</option>
                             <option value="Security">Security</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Contact</label>
-                        <input type="tel" id="staffContact" required class="form-input w-full px-4 py-3">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Contact Phone</label>
+                        <input type="tel" id="staffContact" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="555-2004">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Department</label>
-                        <input type="text" id="staffDept" class="form-input w-full px-4 py-3" placeholder="e.g. Cardiology">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Department</label>
+                        <input type="text" id="staffDept" class="form-input w-full px-3.5 py-2 text-sm" placeholder="Pathology">
                     </div>
-                    <div class="md:col-span-2">
-                        <button type="submit" id="add-staff-btn" class="btn-primary px-8 py-3 text-sm">Add Staff Member</button>
+                    <div class="lg:col-span-4 flex justify-end">
+                        <button type="submit" id="add-staff-btn" class="btn-primary px-6 py-2.5 text-sm">Add Staff</button>
                     </div>
                 </form>
             </div>
 
             <div class="card p-6">
-                <h3 class="text-lg font-bold mb-5 text-slate-200">Staff Directory</h3>
-                <div id="staffList" class="space-y-3">
-                    <p class="text-slate-500">Loading staff...</p>
+                <h2 class="text-base font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">Staff Roster</h2>
+                <div id="staffList" class="space-y-2">
+                    <p class="text-slate-400 text-sm">Loading staff...</p>
                 </div>
             </div>
         </div>
 
-        <!-- Doctors Tab -->
-        <div id="content-doctors" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-2">Doctor Directory</h2>
-            <p class="text-slate-400 text-sm mb-6 font-mono">COBOL: GET-DOCTORS-PARA → DOC-CUR → HMS.DOCTORS (DB2)</p>
-            <div id="doctorsList" class="grid md:grid-cols-2 gap-4">
-                <p class="text-slate-500">Loading doctors...</p>
+        <!-- 5. Feedback Tab -->
+        <div id="content-feedback" class="tab-content hidden">
+            <div class="mb-5">
+                <h1 class="text-2xl font-bold text-slate-900">Patient Care Feedback</h1>
+                <p class="text-xs text-slate-500 font-mono">Feedback entries stored in <code>Z72385.HMS_FEEDBACK</code></p>
+            </div>
+            <div id="feedbackList" class="space-y-3">
+                <p class="text-slate-400 text-sm">Loading feedback...</p>
             </div>
         </div>
 
-        <!-- Feedback Tab -->
-        <div id="content-feedback" class="tab-content hidden">
-            <h2 class="text-3xl font-bold mb-2">Patient Feedback</h2>
-            <p class="text-slate-400 text-sm mb-6 font-mono">COBOL: GET-FEEDBACK-PARA → FDBK-CUR → HMS.FEEDBACK (DB2)</p>
-            <div id="feedbackList" class="space-y-4">
-                <p class="text-slate-500">Loading feedback...</p>
+        <!-- 6. Access Control & Data Privacy Tab -->
+        <div id="content-rls" class="tab-content hidden">
+            <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Hospital Data Privacy &amp; Access Control</h1>
+                    <p class="text-xs text-slate-500 mt-1">Role-based security policies governing patient, doctor, and institutional data access</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="rlsCountBadge" class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-200">
+                        9 Active Policies
+                    </span>
+                    <span class="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200">
+                        Access Control Active
+                    </span>
+                </div>
+            </div>
+
+            <!-- Role Permissions Architecture Summary Cards -->
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="card p-4 border-l-4 border-l-purple-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Administrator Role</span>
+                        <span class="text-xs font-mono bg-purple-50 text-purple-800 px-2 py-0.5 rounded border border-purple-200">Full Scope</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">
+                        Unrestricted visibility across all clinical and administrative entities: all patients, all doctor schedules, all wards, all staff, and all billing.
+                    </p>
+                </div>
+
+                <div class="card p-4 border-l-4 border-l-blue-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-700">Physician / Doctor Role</span>
+                        <span class="text-xs font-mono bg-blue-50 text-blue-800 px-2 py-0.5 rounded border border-blue-200">Assigned + Treated</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">
+                        Doctors can access only their own assigned appointments and only demographic/medical records of patients who are active consultations or whom they have previously treated.
+                    </p>
+                </div>
+
+                <div class="card p-4 border-l-4 border-l-emerald-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Patient Role</span>
+                        <span class="text-xs font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">Self Only</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">
+                        Patients are strictly isolated to their own records: their appointments, their medical prescriptions, and their own feedback. All other patient records remain invisible.
+                    </p>
+                </div>
+            </div>
+
+            <!-- RLS Policies Catalog Table -->
+            <div class="card p-5 mb-6">
+                <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Hospital Data Privacy &amp; Row-Level Security Policies</h3>
+                        <p class="text-xs text-slate-500">Active confidentiality rules ensuring isolated access across clinical roles</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 bg-slate-50 text-slate-600">
+                                <th class="p-2.5 font-semibold">Policy Name</th>
+                                <th class="p-2.5 font-semibold">Target Entity</th>
+                                <th class="p-2.5 font-semibold">Role</th>
+                                <th class="p-2.5 font-semibold">Access Condition</th>
+                                <th class="p-2.5 font-semibold">Enforced</th>
+                                <th class="p-2.5 font-semibold">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rlsTableBody">
+                            <tr>
+                                <td colspan="6" class="p-6 text-center text-slate-400">Loading access policies...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Security Audit Reference -->
+            <div class="card p-5 bg-slate-50 border-slate-200">
+                <h3 class="text-sm font-bold text-slate-900 mb-2">🔒 Database Security &amp; Privacy Audit Reference</h3>
+                <p class="text-xs text-slate-600 mb-3">
+                    Authorized system auditors can verify active access policies and test data isolation using the audit queries below:
+                </p>
+                <div class="space-y-3 font-mono text-xs">
+                    <div class="p-3 bg-white rounded border border-slate-200">
+                        <span class="text-slate-500 block text-[11px] font-sans font-semibold mb-1">1. Query all active access control policies:</span>
+                        <code class="text-blue-700">SELECT POLICY_ID, POLICY_NAME, TARGET_TABLE, TARGET_ROLE, RULE_FILTER, ENFORCED FROM Z72385.V_RLS_POLICIES;</code>
+                    </div>
+                    <div class="p-3 bg-white rounded border border-slate-200">
+                        <span class="text-slate-500 block text-[11px] font-sans font-semibold mb-1">2. Verify Doctor patient isolation (returns only patients treated by Dr. Sarah Johnson #1):</span>
+                        <code class="text-blue-700">SELECT * FROM Z72385.V_DOC_TREATED_PATIENTS WHERE DOCTOR_ID = 1;</code>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="statusMessage" class="fixed bottom-4 right-4 hidden p-4 rounded-xl shadow-2xl text-sm font-semibold max-w-xs z-50"></div>
+    <!-- Status Toast Notification -->
+    <div id="statusMessage" class="fixed bottom-4 right-4 hidden px-4 py-3 rounded-md shadow-lg text-xs font-semibold max-w-sm z-50"></div>
 
     <script>
         const API_URL = 'http://localhost:8080/api';
@@ -219,11 +396,18 @@
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`content-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+            const targetContent = document.getElementById(`content-${tabName}`);
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetContent) targetContent.classList.remove('hidden');
+            if (targetTab) targetTab.classList.add('active');
+
             const loaders = {
-                wards: loadWards, staff: loadStaff,
-                doctors: loadDoctors, feedback: loadFeedback
+                dashboard: loadAdminStats,
+                wards: loadWards,
+                staff: loadStaff,
+                doctors: loadDoctors,
+                feedback: loadFeedback,
+                rls: loadRlsPolicies
             };
             if (loaders[tabName]) loaders[tabName]();
         }
@@ -236,7 +420,7 @@
                 document.getElementById('todayAppointments').textContent = stats.today_appointments || 0;
 
                 if (stats.wards && stats.wards.length > 0) {
-                    const icu = stats.wards.find(w => (w.type||'').toUpperCase() === 'ICU');
+                    const icu = stats.wards.find(w => (w.type || '').toUpperCase() === 'ICU');
                     if (icu) {
                         const pct = Math.round((icu.occupied_beds / icu.total_beds) * 100);
                         document.getElementById('icuOccupancy').textContent = pct + '%';
@@ -244,12 +428,12 @@
                     const wardStats = document.getElementById('wardStats');
                     wardStats.innerHTML = stats.wards.map(ward => {
                         const pct = Math.round(((ward.occupied_beds || 0) / (ward.total_beds || 1)) * 100);
-                        const colorClass = pct > 80 ? 'bg-red-500' : pct > 50 ? 'bg-yellow-500' : 'bg-emerald-500';
+                        const colorClass = pct > 80 ? 'bg-rose-500' : pct > 50 ? 'bg-amber-500' : 'bg-blue-600';
                         return `
                             <div>
-                                <div class="flex justify-between mb-2 text-sm">
-                                    <span class="font-semibold text-slate-300">${ward.type || ward.WARD_TYPE}</span>
-                                    <span class="text-slate-400">${ward.occupied_beds || ward.OCCPD_BEDS} / ${ward.total_beds || ward.TOTAL_BEDS} beds (${pct}%)</span>
+                                <div class="flex justify-between mb-1.5 text-xs">
+                                    <span class="font-semibold text-slate-800">${ward.type} Ward</span>
+                                    <span class="text-slate-500">${ward.occupied_beds} of ${ward.total_beds} beds occupied (${pct}%)</span>
                                 </div>
                                 <div class="progress-bar">
                                     <div class="progress-fill ${colorClass}" style="width: ${pct}%"></div>
@@ -258,7 +442,9 @@
                         `;
                     }).join('');
                 }
-            } catch (error) { console.error('Stats load error:', error); }
+            } catch (error) {
+                console.error('Stats load error:', error);
+            }
         }
 
         async function loadWards() {
@@ -266,7 +452,7 @@
                 const stats = await fetch(`${API_URL}/admin/stats`).then(r => r.json());
                 const wardsList = document.getElementById('wardsList');
                 if (!stats.wards || stats.wards.length === 0) {
-                    wardsList.innerHTML = '<p class="text-slate-500">No wards found.</p>';
+                    wardsList.innerHTML = '<p class="text-slate-400 text-sm">No wards configured.</p>';
                     return;
                 }
                 wardsList.innerHTML = stats.wards.map(ward => {
@@ -275,31 +461,35 @@
                     const occupied = ward.occupied_beds;
                     const total = ward.total_beds;
                     return `
-                        <div class="card p-6">
-                            <div class="flex justify-between items-start mb-4">
+                        <div class="card p-5">
+                            <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <h3 class="text-lg font-bold text-slate-200">${ward.type} Ward</h3>
-                                    <p class="text-slate-400 text-sm">${occupied} / ${total} beds occupied (${pct}%)</p>
+                                    <h3 class="text-base font-bold text-slate-900">${ward.type} Ward</h3>
+                                    <p class="text-slate-500 text-xs mt-0.5">${occupied} / ${total} beds occupied (${pct}%)</p>
                                 </div>
-                                <span class="text-2xl">${ward.type === 'ICU' ? '🏥' : ward.type === 'EMERGENCY' ? '🚨' : '🛏️'}</span>
+                                <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${pct > 80 ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                                    ${pct}% Occupied
+                                </span>
                             </div>
                             <div class="progress-bar mb-4">
-                                <div class="progress-fill" style="width: ${pct}%; background: ${pct > 80 ? '#dc2626' : pct > 50 ? '#ca8a04' : '#059669'}"></div>
+                                <div class="progress-fill" style="width: ${pct}%; background: ${pct > 80 ? '#dc2626' : pct > 50 ? '#d97706' : '#2563eb'}"></div>
                             </div>
-                            <div class="flex items-center gap-3 mt-4">
-                                <label class="text-sm text-slate-400">Update occupied beds:</label>
+                            <div class="flex items-center gap-3 pt-3 border-t border-slate-100">
+                                <label class="text-xs text-slate-600 font-medium">Update occupied beds:</label>
                                 <input type="number" id="ward-input-${wardId}" min="0" max="${total}" value="${occupied}"
-                                    class="form-input w-24 px-3 py-2 text-sm">
-                                <button onclick="updateWard(${wardId}, 'ward-input-${wardId}')" class="btn-primary px-4 py-2 text-sm">Update</button>
+                                    class="form-input w-24 px-2.5 py-1.5 text-xs text-center font-semibold">
+                                <button onclick="updateWard(${wardId}, 'ward-input-${wardId}')" class="btn-primary px-3.5 py-1.5 text-xs">Save Update</button>
                             </div>
                         </div>
                     `;
                 }).join('');
-            } catch (error) { document.getElementById('wardsList').innerHTML = '<p class="text-red-400">Error loading wards.</p>'; }
+            } catch (error) {
+                document.getElementById('wardsList').innerHTML = '<p class="text-rose-600 text-sm">Error loading wards.</p>';
+            }
         }
 
         async function updateWard(wardId, inputId) {
-            const occupiedBeds = parseInt(document.getElementById(inputId).value);
+            const occupiedBeds = parseInt(document.getElementById(inputId).value, 10);
             try {
                 const result = await fetch(`${API_URL}/ward/update`, {
                     method: 'POST',
@@ -307,13 +497,78 @@
                     body: JSON.stringify({ ward_id: wardId, occupied_beds: occupiedBeds })
                 }).then(r => r.json());
                 if (result.success) {
-                    showStatus('Ward updated successfully!');
+                    showStatus('Ward capacity updated successfully!');
                     loadWards();
                     loadAdminStats();
                 } else {
-                    showStatus('Ward update failed', true);
+                    showStatus('Ward update failed: ' + (result.error || ''), true);
                 }
-            } catch (error) { showStatus('Error updating ward', true); }
+            } catch (error) {
+                showStatus('Error updating ward in database', true);
+            }
+        }
+
+        async function loadDoctors() {
+            try {
+                const doctors = await fetch(`${API_URL}/doctors`).then(r => r.json());
+                const list = document.getElementById('doctorsList');
+                const badge = document.getElementById('docCountBadge');
+                if (!Array.isArray(doctors) || doctors.length === 0) {
+                    list.innerHTML = '<p class="text-slate-400 text-sm col-span-full">No doctors currently registered.</p>';
+                    if (badge) badge.textContent = '0 Doctors';
+                    return;
+                }
+                if (badge) badge.textContent = `${doctors.length} Doctors Active`;
+                list.innerHTML = doctors.map(d => `
+                    <div class="p-4 rounded-lg border border-slate-200 bg-white hover:border-blue-300 transition-colors">
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <h4 class="font-bold text-slate-900 text-sm leading-tight">${d.name}</h4>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                ${d.status || 'ACTIVE'}
+                            </span>
+                        </div>
+                        <div class="inline-block text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 mb-2">
+                            ${d.specialization}
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-0.5">
+                            <div>🏢 Dept: <span class="text-slate-700">${d.department}</span></div>
+                            <div>📞 Contact: <span class="text-slate-700">${d.contact || 'N/A'}</span></div>
+                            <div>✉️ Email: <span class="text-slate-700">${d.email || 'N/A'}</span></div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('doctorsList').innerHTML = '<p class="text-rose-600 text-sm col-span-full">Error loading doctor records.</p>';
+            }
+        }
+
+        async function addDoctor(event) {
+            event.preventDefault();
+            const data = {
+                name: document.getElementById('docName').value.trim(),
+                specialization: document.getElementById('docSpec').value.trim(),
+                department: document.getElementById('docDept').value.trim(),
+                contact: document.getElementById('docContact').value.trim(),
+                email: document.getElementById('docEmail').value.trim(),
+                password: document.getElementById('docPassword').value
+            };
+            try {
+                const result = await fetch(`${API_URL}/doctor/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(r => r.json());
+                if (result.success) {
+                    showStatus(`Dr. ${data.name} onboarded successfully!`);
+                    event.target.reset();
+                    loadDoctors();
+                    loadAdminStats();
+                } else {
+                    showStatus(result.error || 'Failed to add doctor', true);
+                }
+            } catch (error) {
+                showStatus('Error adding doctor', true);
+            }
         }
 
         async function loadStaff() {
@@ -321,28 +576,32 @@
                 const staff = await fetch(`${API_URL}/staff`).then(r => r.json());
                 const list = document.getElementById('staffList');
                 if (!Array.isArray(staff) || staff.length === 0) {
-                    list.innerHTML = '<p class="text-slate-500">No staff found.</p>';
+                    list.innerHTML = '<p class="text-slate-400 text-sm">No staff records found.</p>';
                     return;
                 }
                 list.innerHTML = staff.map(s => `
-                    <div class="flex items-center justify-between bg-slate-900/60 rounded-xl px-5 py-4">
+                    <div class="flex items-center justify-between p-3.5 rounded-lg border border-slate-200 bg-white">
                         <div>
-                            <span class="font-semibold text-slate-200">${s.name}</span>
-                            <span class="text-slate-400 text-sm ml-3">${s.role} | ${s.department || 'N/A'} | 📞 ${s.contact}</span>
+                            <span class="font-bold text-slate-900 text-sm">${s.name}</span>
+                            <span class="text-slate-500 text-xs ml-2">${s.role} · ${s.department || 'General'} · 📞 ${s.contact}</span>
                         </div>
-                        <span class="text-xs px-2 py-1 bg-emerald-900/30 text-emerald-400 border border-emerald-800 rounded-full">${s.status || 'ACTIVE'}</span>
+                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ${s.status || 'ACTIVE'}
+                        </span>
                     </div>
                 `).join('');
-            } catch (error) { document.getElementById('staffList').innerHTML = '<p class="text-red-400">Error loading staff.</p>'; }
+            } catch (error) {
+                document.getElementById('staffList').innerHTML = '<p class="text-rose-600 text-sm">Error loading staff list.</p>';
+            }
         }
 
         async function addStaff(event) {
             event.preventDefault();
             const data = {
-                name: document.getElementById('staffName').value,
+                name: document.getElementById('staffName').value.trim(),
                 role: document.getElementById('staffRole').value,
-                contact: document.getElementById('staffContact').value,
-                department: document.getElementById('staffDept').value || ''
+                contact: document.getElementById('staffContact').value.trim(),
+                department: document.getElementById('staffDept').value.trim()
             };
             try {
                 const result = await fetch(`${API_URL}/staff/add`, {
@@ -351,36 +610,15 @@
                     body: JSON.stringify(data)
                 }).then(r => r.json());
                 if (result.success) {
-                    showStatus('Staff member added!');
+                    showStatus('Staff member added successfully!');
                     event.target.reset();
                     loadStaff();
                 } else {
-                    showStatus(result.error || 'Add staff failed', true);
+                    showStatus(result.error || 'Failed to add staff', true);
                 }
-            } catch (error) { showStatus('Error adding staff', true); }
-        }
-
-        async function loadDoctors() {
-            try {
-                const doctors = await fetch(`${API_URL}/doctors`).then(r => r.json());
-                const list = document.getElementById('doctorsList');
-                if (!Array.isArray(doctors) || doctors.length === 0) {
-                    list.innerHTML = '<p class="text-slate-500">No doctors found.</p>';
-                    return;
-                }
-                list.innerHTML = doctors.map(d => `
-                    <div class="card p-5 card-hover">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-yellow-500/20 flex items-center justify-center text-xl shrink-0">👨‍⚕️</div>
-                            <div>
-                                <h4 class="font-bold text-slate-200">${d.name}</h4>
-                                <p class="text-yellow-400 text-sm font-semibold">${d.specialization}</p>
-                                <p class="text-slate-400 text-xs mt-1">${d.department} | 📞 ${d.contact}</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) { document.getElementById('doctorsList').innerHTML = '<p class="text-red-400">Error loading doctors.</p>'; }
+            } catch (error) {
+                showStatus('Error adding staff member', true);
+            }
         }
 
         async function loadFeedback() {
@@ -388,30 +626,69 @@
                 const feedback = await fetch(`${API_URL}/feedback`).then(r => r.json());
                 const list = document.getElementById('feedbackList');
                 if (!Array.isArray(feedback) || feedback.length === 0) {
-                    list.innerHTML = '<p class="text-slate-500">No feedback submissions yet.</p>';
+                    list.innerHTML = '<p class="text-slate-400 text-sm">No feedback submissions found.</p>';
                     return;
                 }
                 list.innerHTML = feedback.map(f => `
-                    <div class="card p-5">
-                        <div class="flex justify-between items-start mb-3">
+                    <div class="card p-4">
+                        <div class="flex justify-between items-start mb-2">
                             <div>
-                                <span class="font-bold text-slate-200">${f.patient_name}</span>
-                                <span class="text-slate-400 text-xs ml-3">📅 ${f.date}</span>
+                                <span class="font-bold text-slate-900 text-sm">${f.patient_name}</span>
+                                <span class="text-slate-400 text-xs ml-2">📅 ${f.date}</span>
                             </div>
-                            <span class="px-2 py-1 rounded-full text-xs font-bold ${(f.status||'UNREAD').toUpperCase() === 'UNREAD' ? 'badge-unread' : 'badge-read'}">${(f.status || 'UNREAD').toUpperCase()}</span>
+                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${(f.status || 'UNREAD').toUpperCase() === 'UNREAD' ? 'badge-unread' : 'badge-read'}">
+                                ${f.status || 'UNREAD'}
+                            </span>
                         </div>
-                        <p class="text-slate-300 text-sm leading-relaxed">${f.message}</p>
+                        <p class="text-slate-600 text-xs leading-relaxed">${f.message}</p>
                     </div>
                 `).join('');
-            } catch (error) { document.getElementById('feedbackList').innerHTML = '<p class="text-red-400">Error loading feedback.</p>'; }
+            } catch (error) {
+                document.getElementById('feedbackList').innerHTML = '<p class="text-rose-600 text-sm">Error loading feedback.</p>';
+            }
+        }
+
+        async function loadRlsPolicies() {
+            const tbody = document.getElementById('rlsTableBody');
+            try {
+                const res = await fetch(`${API_URL}/rls/policies`).then(r => r.json());
+                if (!res.success || !res.policies || res.policies.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">No access control policies currently active.</td></tr>';
+                    return;
+                }
+                const badge = document.getElementById('rlsCountBadge');
+                if (badge) badge.textContent = `${res.policies.length} Active Policies`;
+                tbody.innerHTML = res.policies.map(p => `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="p-2.5 font-mono font-semibold text-blue-700">${p.name}</td>
+                        <td class="p-2.5 font-mono text-slate-700">${p.table}</td>
+                        <td class="p-2.5">
+                            <span class="px-2 py-0.5 rounded text-[11px] font-semibold ${
+                                p.role === 'ADMIN' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+                                p.role === 'DOCTOR' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                                'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            }">${p.role}</span>
+                        </td>
+                        <td class="p-2.5 font-mono text-[11px] text-slate-600 max-w-xs truncate" title="${p.filter}">${p.filter}</td>
+                        <td class="p-2.5">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                ✓ ${p.enforced === 'Y' ? 'Enforced' : 'Active'}
+                            </span>
+                        </td>
+                        <td class="p-2.5 text-slate-500 text-[11px]">${p.status}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-rose-500">Error loading access policies.</td></tr>';
+            }
         }
 
         function showStatus(message, isError = false) {
             const el = document.getElementById('statusMessage');
             el.textContent = message;
-            el.className = `fixed bottom-4 right-4 p-4 rounded-xl shadow-2xl text-sm font-semibold max-w-xs z-50 ${isError ? 'bg-red-600 text-white' : 'bg-emerald-600 text-white'}`;
+            el.className = `fixed bottom-4 right-4 px-4 py-3 rounded-md shadow-lg text-xs font-semibold max-w-sm z-50 ${isError ? 'bg-rose-600 text-white' : 'bg-slate-900 text-white'}`;
             el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
+            setTimeout(() => el.classList.add('hidden'), 3500);
         }
 
         document.addEventListener('DOMContentLoaded', checkAuth);

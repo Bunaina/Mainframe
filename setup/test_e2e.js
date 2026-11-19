@@ -52,6 +52,7 @@ async function main() {
     let createdPrescId = null;
     let createdFdbkId = null;
     let createdStaffId = null;
+    let createdDoctorId = null;
 
     try {
         const health = await waitReady();
@@ -73,11 +74,33 @@ async function main() {
 
         // 2. Doctors, Admin stats, Staff
         const docs = await req('GET', '/api/doctors');
-        assert(Array.isArray(docs) && docs.length === 4, `GET /api/doctors returned ${docs.length} doctors`);
+        assert(Array.isArray(docs) && docs.length >= 4, `GET /api/doctors returned ${docs.length} doctors`);
 
         const stats = await req('GET', '/api/admin/stats');
-        assert(stats.total_patients >= 1 && stats.total_doctors === 4 && stats.wards.length === 3,
+        assert(stats.total_patients >= 1 && stats.total_doctors >= 4 && stats.wards.length >= 3,
             `GET /api/admin/stats (patients=${stats.total_patients}, doctors=${stats.total_doctors}, wards=${stats.wards.length})`);
+
+        // Test Doctor Onboarding API (with bcrypt)
+        const testDocEmail = `test.onboard.${Date.now()}@hospital.com`;
+        const newDoc = await req('POST', '/api/doctor/add', {
+            name: 'Dr. Test Onboard',
+            specialization: 'Neurology',
+            department: 'Neurology Dept',
+            contact: '555-8888',
+            email: testDocEmail,
+            password: 'onboardPass123'
+        });
+        assert(newDoc.success && newDoc.doctor_id > 0, `POST /api/doctor/add (id=${newDoc.doctor_id})`);
+        createdDoctorId = newDoc.doctor_id;
+
+        // Test login with newly onboarded doctor (verifies bcrypt hash & compare)
+        const testDocLogin = await req('POST', '/api/login', {
+            email: testDocEmail,
+            password: 'onboardPass123',
+            role: 'doctor'
+        });
+        assert(testDocLogin.success && testDocLogin.user.name === 'Dr. Test Onboard',
+            'POST /api/login verified bcrypt password for newly onboarded doctor');
 
         const staff = await req('GET', '/api/staff');
         assert(Array.isArray(staff) && staff.length >= 3, `GET /api/staff returned ${staff.length} staff`);
@@ -156,6 +179,51 @@ async function main() {
         assert(wUpd.success === true, 'POST /api/ward/update');
         await req('POST', '/api/ward/update', { ward_id: stats.wards[0].ward_id, occupied_beds: 5 });
 
+        // 10. RLS Verification Tests
+        // 10a. Admin can see all (patients & appointments)
+        const allPatientsAdmin = await req('GET', '/api/admin/patients');
+        assert(Array.isArray(allPatientsAdmin) && allPatientsAdmin.length >= 6,
+            `RLS [Admin]: Admin can see all patients (${allPatientsAdmin.length} records)`);
+
+        const allApptsAdmin = await req('GET', '/api/admin/appointments');
+        assert(Array.isArray(allApptsAdmin) && allApptsAdmin.length >= 9,
+            `RLS [Admin]: Admin can see all appointments (${allApptsAdmin.length} records across all doctors)`);
+
+        // 10b. Doctor can see only their assigned appointments
+        const doc1Appts = await req('GET', '/api/doctor/appointments?doctor_id=1');
+        assert(Array.isArray(doc1Appts) && doc1Appts.length >= 1,
+            `RLS [Doctor]: Doctor 1 returned ${doc1Appts.length} assigned appointments`);
+
+        // 10c. Doctor can see only patients whom they have treated previously
+        const doc1Patients = await req('GET', '/api/doctor/patients?doctor_id=1');
+        assert(Array.isArray(doc1Patients) && doc1Patients.some(p => p.id === 1),
+            'RLS [Doctor]: Doctor 1 sees treated patient John Doe (#1)');
+        assert(!doc1Patients.some(p => p.id === 2),
+            'RLS [Doctor]: Doctor 1 CANNOT see patient Maria Garcia (#2, treated by Doctor 3)');
+
+        const doc3Patients = await req('GET', '/api/doctor/patients?doctor_id=3');
+        assert(doc3Patients.some(p => p.id === 2),
+            'RLS [Doctor]: Doctor 3 sees treated patient Maria Garcia (#2)');
+        assert(!doc3Patients.some(p => p.id === 1),
+            'RLS [Doctor]: Doctor 3 CANNOT see patient John Doe (#1, treated by Doctor 1)');
+
+        // 10d. Doctor cross-appointment RLS prevention
+        const illegalPresc = await req('POST', '/api/prescription/add', {
+            appointment_id: createdApptId, // assigned to doc.user.id (Doctor 1)
+            patient_id: pat.user.id,
+            doctor_id: 999, // Unassigned doctor
+            medicine: 'Illegal Med',
+            dosage: '1 tab',
+            duration: '1 day',
+        });
+        assert(illegalPresc.success === false && illegalPresc.error.includes('RLS Access Denied'),
+            'RLS [Doctor]: Unassigned doctor prevented from writing prescription for another doctor appointment');
+
+        // 10e. RLS Policies Catalog check
+        const rlsCatalog = await req('GET', '/api/rls/policies');
+        assert(rlsCatalog.success && rlsCatalog.total_policies >= 9,
+            `RLS [Catalog]: Live Db2 catalog returns ${rlsCatalog.total_policies} active RLS policies`);
+
         // Cleanup synthetic test records so Db2 stays clean with seed data
         const db = new Db2Client();
         await db.init();
@@ -165,6 +233,8 @@ async function main() {
         await db.exec(`DELETE FROM ${schema}.HMS_APPOINTMENTS WHERE APPT_DATE = '2026-11-20' AND APPT_TIME = '14:30:00'`);
         if (createdFdbkId) await db.exec(`DELETE FROM ${schema}.HMS_FEEDBACK WHERE FDBK_ID = ?`, [createdFdbkId]);
         if (createdStaffId) await db.exec(`DELETE FROM ${schema}.HMS_STAFF WHERE STAFF_ID = ?`, [createdStaffId]);
+        if (createdDoctorId) await db.exec(`DELETE FROM ${schema}.HMS_DOCTORS WHERE DOCTOR_ID = ?`, [createdDoctorId]);
+        await db.exec(`DELETE FROM ${schema}.HMS_DOCTORS WHERE DOC_EMAIL LIKE 'test.onboard%'`);
         db.close();
         console.log('  [CLEAN] Synthetic E2E test rows cleaned up from Db2.');
         console.log('\nALL LIVE E2E TESTS PASSED WITH ZERO ERRORS!');

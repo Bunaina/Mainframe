@@ -3,310 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="HealthCare+ Hospital Management System powered by IBM Mainframe — DB2, COBOL, and JCL for enterprise-grade healthcare.">
-    <title>HealthCare+ | Hospital Management System — IBM Mainframe Edition</title>
+    <meta name="description" content="HealthCare+ Hospital Management System — Comprehensive Clinical Care, Inpatient Management & Digital Patient Services.">
+    <title>HealthCare+ | Hospital Management System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #0f172a; }
-        .hero-gradient {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 70%, #6d28d9 100%);
+        * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f8fafc; color: #0f172a; }
+        .nav-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
         }
-        .mf-badge {
-            background: linear-gradient(90deg, rgba(99,102,241,0.25), rgba(139,92,246,0.25));
-            border: 1px solid rgba(167,139,250,0.4);
-            backdrop-filter: blur(6px);
+        .hero-banner {
+            background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+            border-bottom: 1px solid #e2e8f0;
         }
-        .tech-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s;
+        .feature-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
-        .tech-card:hover {
-            transform: translateY(-5px);
-            background: rgba(139,92,246,0.15);
-            border-color: rgba(167,139,250,0.5);
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: #93c5fd;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.08);
         }
-        .nav-glass {
-            background: rgba(255,255,255,0.97);
-            border-bottom: 2px solid rgba(99,102,241,0.12);
+        .btn-primary {
+            background: #1d4ed8;
+            color: #ffffff;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
         }
-        .modal-backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+        .btn-outline {
+            background: #ffffff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+        .btn-outline:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+        }
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
+        }
         .modal-card {
-            background: #1e1b4b;
-            border: 1px solid rgba(167,139,250,0.3);
-            color: #e2e8f0;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            color: #0f172a;
         }
         .form-input {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(167,139,250,0.3);
-            color: #e2e8f0;
-            border-radius: 0.75rem;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .form-input:focus {
             outline: none;
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
-        .form-input option { background: #1e1b4b; color: #e2e8f0; }
-        .btn-primary {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            color: white;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .btn-primary:hover { background: linear-gradient(135deg, #6d28d9, #5b21b6); transform: translateY(-1px); }
         .role-btn {
-            border: 2px solid rgba(167,139,250,0.3);
-            border-radius: 0.75rem;
-            color: #a5b4fc;
-            transition: all 0.2s;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            color: #475569;
+            background: #f8fafc;
+            font-weight: 600;
+            transition: all 0.15s ease;
         }
-        .role-btn.active, .role-btn:hover {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            color: white;
-            border-color: transparent;
+        .role-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
         }
-        @keyframes floatUp { 0%{opacity:0;transform:translateY(20px)} 100%{opacity:1;transform:translateY(0)} }
-        .float-in { animation: floatUp 0.5s ease forwards; }
-        @keyframes pulse-glow { 0%,100%{box-shadow:0 0 10px rgba(124,58,237,0.2)} 50%{box-shadow:0 0 25px rgba(124,58,237,0.5)} }
-        .mf-badge { animation: pulse-glow 3s infinite; }
+        .role-btn.active {
+            background: #1d4ed8;
+            color: #ffffff;
+            border-color: #1d4ed8;
+        }
+        .badge-pill {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1d4ed8;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+        }
     </style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="nav-glass shadow-lg sticky top-0 z-40">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl font-extrabold bg-gradient-to-r from-violet-600 to-purple-700 bg-clip-text text-transparent">🏥 HealthCare+</span>
-                    <span class="hidden md:inline-flex items-center gap-1 text-xs font-bold text-violet-700 bg-violet-50 border border-violet-200 rounded-full px-3 py-1 tracking-wide">
-                        🖥️ IBM Mainframe Edition
-                    </span>
+<body class="min-h-screen flex flex-col">
+    <!-- Top Medical Header -->
+    <header class="nav-bar sticky top-0 z-40">
+        <div class="container mx-auto px-6 py-3.5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xl font-bold shadow-sm">
+                    +
                 </div>
-                <div class="flex gap-3">
-                    <button id="nav-login-btn" onclick="showLogin()" class="px-5 py-2 text-purple-700 font-semibold hover:text-purple-900 transition-colors">Login</button>
-                    <button id="nav-register-btn" onclick="showRegister()" class="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-700 text-white rounded-xl font-semibold hover:from-violet-700 hover:to-purple-800 transition-all shadow-lg shadow-violet-200">Register</button>
+                <div>
+                    <span class="text-xl font-extrabold text-blue-900 tracking-tight">HealthCare+</span>
+                    <span class="text-xs text-slate-500 block -mt-1 font-medium">Hospital Information System</span>
                 </div>
+                <span class="hidden md:inline-flex items-center gap-1.5 badge-pill ml-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Patient Care &amp; Clinical Center
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="nav-login-btn" onclick="showLogin()" class="px-5 py-2 text-blue-700 font-semibold hover:text-blue-900 transition-colors text-sm">
+                    Sign In
+                </button>
+                <button id="nav-register-btn" onclick="showRegister()" class="btn-primary px-5 py-2 text-sm shadow-sm">
+                    Register as Patient
+                </button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient text-white py-28 relative overflow-hidden">
-        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-violet-600 opacity-10 blur-3xl"></div>
-        <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-purple-400 opacity-10 blur-3xl"></div>
-        <div class="container mx-auto px-6 text-center relative z-10 float-in">
-            <div class="mf-badge inline-flex items-center gap-2 rounded-full px-5 py-2 mb-8 text-sm font-bold text-violet-200 tracking-widest uppercase">
-                <span>🖥️</span>
-                <span>Powered by IBM Mainframe — DB2 · COBOL · JCL · z/OS</span>
-            </div>
-            <h1 class="text-5xl md:text-6xl font-extrabold mb-5 leading-tight">Welcome to <span class="text-violet-300">HealthCare+</span></h1>
-            <p class="text-xl text-violet-200 mb-3 max-w-2xl mx-auto font-medium">Your Complete Enterprise Hospital Management Solution</p>
-            <p class="text-base text-violet-300 mb-12 max-w-xl mx-auto">Book appointments, manage medical records, and access healthcare services — backed by <strong>99.999% uptime</strong> IBM Mainframe reliability</p>
+    <!-- Main Hero Banner -->
+    <section class="hero-banner py-16 md:py-20">
+        <div class="container mx-auto px-6 text-center max-w-4xl">
+            <span class="badge-pill inline-block mb-4">Leading Healthcare Services</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">
+                Compassionate Clinical Care &amp; Advanced Medical Excellence
+            </h1>
+            <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Seamless patient consultations, digital electronic prescriptions, specialized inpatient care wards, and 24/7 emergency response.
+            </p>
             <div class="flex justify-center gap-4 flex-wrap">
-                <button id="hero-get-started-btn" onclick="showRegister()" class="px-10 py-4 bg-white text-purple-700 rounded-2xl font-bold hover:bg-violet-50 transition-all shadow-2xl text-lg">Get Started</button>
-                <button id="hero-signin-btn" onclick="showLogin()" class="px-10 py-4 border-2 border-white/50 text-white rounded-2xl font-bold hover:bg-white/10 transition-all text-lg">Sign In</button>
+                <button id="hero-signin-btn" onclick="showLogin()" class="btn-primary px-8 py-3 text-base shadow-sm">
+                    Access Portal
+                </button>
+                <button id="hero-get-started-btn" onclick="showRegister()" class="btn-outline px-8 py-3 text-base">
+                    Patient Registration
+                </button>
             </div>
-        </div>
-    </section>
 
-    <!-- Mainframe Tech Stack Section -->
-    <section class="bg-slate-900 py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-center text-3xl font-extrabold text-white mb-3">Enterprise Mainframe Architecture</h2>
-            <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">This system is built on IBM Mainframe technology — the same infrastructure trusted by banks, airlines, and healthcare providers worldwide</p>
-            <div class="grid md:grid-cols-4 gap-6">
-                <div class="tech-card rounded-2xl p-7 text-center text-white">
-                    <div class="text-5xl mb-4">🗄️</div>
-                    <h3 class="font-bold text-lg mb-2">IBM DB2 z/OS</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">9 dedicated tablespaces, row-level locking, image copy backups, RUNSTATS optimizer</p>
+            <!-- Hospital Performance Stats Banner -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t border-slate-200">
+                <div class="p-3">
+                    <div class="text-2xl font-bold text-blue-700">120+</div>
+                    <div class="text-xs text-slate-500 font-medium mt-0.5">Specialist Physicians</div>
                 </div>
-                <div class="tech-card rounded-2xl p-7 text-center text-white">
-                    <div class="text-5xl mb-4">📟</div>
-                    <h3 class="font-bold text-lg mb-2">COBOL Programs</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">HMSAUTH · HMSAPPT · HMSADMIN — replaces C++ OOP classes with DB2-embedded business logic</p>
+                <div class="p-3">
+                    <div class="text-2xl font-bold text-blue-700">24/7</div>
+                    <div class="text-xs text-slate-500 font-medium mt-0.5">Emergency &amp; Trauma Care</div>
                 </div>
-                <div class="tech-card rounded-2xl p-7 text-center text-white">
-                    <div class="text-5xl mb-4">📋</div>
-                    <h3 class="font-bold text-lg mb-2">JCL Batch Jobs</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">HMSBATCH: Daily reports, billing updates, statistics, DB2 RUNSTATS, tape IMAGE COPY</p>
+                <div class="p-3">
+                    <div class="text-2xl font-bold text-blue-700">99.4%</div>
+                    <div class="text-xs text-slate-500 font-medium mt-0.5">Patient Satisfaction</div>
                 </div>
-                <div class="tech-card rounded-2xl p-7 text-center text-white">
-                    <div class="text-5xl mb-4">🌐</div>
-                    <h3 class="font-bold text-lg mb-2">Node.js Bridge</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">REST API gateway to DB2 via ibm_db (production) · SQLite simulation (development)</p>
+                <div class="p-3">
+                    <div class="text-2xl font-bold text-blue-700">6 Wards</div>
+                    <div class="text-xs text-slate-500 font-medium mt-0.5">Specialized Inpatient Units</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="bg-slate-800 py-20">
+    <!-- Role Portals Section -->
+    <section class="py-14 bg-white border-b border-slate-200">
         <div class="container mx-auto px-6">
-            <h2 class="text-center text-3xl font-extrabold text-white mb-12">Three Portals, One Mainframe</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-slate-700/50 border border-slate-600 rounded-2xl p-8 hover:border-violet-500 transition-colors">
-                    <div class="text-4xl mb-4">👤</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Patient Portal</h3>
-                    <ul class="text-slate-400 space-y-2 text-sm">
-                        <li>📅 Book appointments with any doctor</li>
-                        <li>💊 View prescriptions &amp; health records</li>
-                        <li>📊 Dashboard statistics</li>
-                        <li>💬 Submit feedback to administration</li>
-                    </ul>
-                </div>
-                <div class="bg-slate-700/50 border border-slate-600 rounded-2xl p-8 hover:border-violet-500 transition-colors">
-                    <div class="text-4xl mb-4">👨‍⚕️</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Doctor Portal</h3>
-                    <ul class="text-slate-400 space-y-2 text-sm">
-                        <li>📋 Manage today's appointments</li>
-                        <li>✅ Update appointment status</li>
-                        <li>💊 Add prescriptions for patients</li>
-                        <li>📊 Dashboard with daily stats</li>
-                    </ul>
-                </div>
-                <div class="bg-slate-700/50 border border-slate-600 rounded-2xl p-8 hover:border-violet-500 transition-colors">
-                    <div class="text-4xl mb-4">🏥</div>
-                    <h3 class="text-xl font-bold text-white mb-3">Admin Panel</h3>
-                    <ul class="text-slate-400 space-y-2 text-sm">
-                        <li>📊 Hospital overview &amp; live stats</li>
-                        <li>🛏️ Ward management (ICU, General, Emergency)</li>
-                        <li>👥 Staff management</li>
-                        <li>📬 View patient feedback</li>
-                    </ul>
-                </div>
+            <div class="text-center mb-10">
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Dedicated Clinical &amp; Administrative Portals</h2>
+                <p class="text-sm text-slate-500 mt-1">Role-based security tailored for patients, healthcare providers, and hospital directors.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-slate-950 text-white py-14 border-t border-slate-800">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4 text-violet-300">🏥 HealthCare+</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Enterprise hospital management powered by IBM Mainframe — the most reliable platform in computing history.</p>
-                    <div class="mt-4 text-xs text-slate-500 font-mono bg-slate-900 rounded-lg p-3 leading-relaxed">
-                        DB: IBM DB2 z/OS<br>
-                        PROG: COBOL (HMSAUTH/APPT/ADMIN)<br>
-                        BATCH: JCL (HMSBATCH)<br>
-                        API: Node.js → ibm_db
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Patient Card -->
+                <div class="feature-card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold mb-4">
+                            👤
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Patient Portal</h3>
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Book specialist appointments, review diagnostic records, monitor medications, and provide care feedback.
+                        </p>
+                        <ul class="text-sm text-slate-600 space-y-2 mb-6">
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Direct doctor booking</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Prescription &amp; dosage view</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Secure personal health history</li>
+                        </ul>
                     </div>
+                    <button onclick="selectRole('patient'); showLogin();" class="btn-outline w-full py-2.5 text-sm">
+                        Patient Sign In
+                    </button>
                 </div>
-                <div>
-                    <h4 class="text-base font-bold mb-4 text-slate-300">Quick Links</h4>
-                    <ul class="space-y-2 text-slate-400 text-sm">
-                        <li><a href="#" class="hover:text-violet-300 transition">Home</a></li>
-                        <li><a href="#" onclick="showLogin(); return false;" class="hover:text-violet-300 transition">Login</a></li>
-                        <li><a href="#" onclick="showRegister(); return false;" class="hover:text-violet-300 transition">Register</a></li>
-                        <li><a href="WHY_MAINFRAME.md" class="hover:text-violet-300 transition">Why Mainframe?</a></li>
-                    </ul>
+
+                <!-- Doctor Card -->
+                <div class="feature-card p-6 flex flex-col justify-between border-blue-200 bg-blue-50/30">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xl font-bold mb-4 shadow-sm">
+                            👨‍⚕️
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Doctor Portal</h3>
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Consultation schedules, patient medical queues, appointment updates, and digital prescription authoring.
+                        </p>
+                        <ul class="text-sm text-slate-600 space-y-2 mb-6">
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Daily appointment schedule</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Write prescriptions &amp; clinical notes</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Access treated patient records</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectRole('doctor'); showLogin();" class="btn-primary w-full py-2.5 text-sm">
+                        Doctor Sign In
+                    </button>
                 </div>
-                <div>
-                    <h4 class="text-base font-bold mb-4 text-slate-300">Services</h4>
-                    <ul class="space-y-2 text-slate-400 text-sm">
-                        <li>Emergency Care</li>
-                        <li>Outpatient Services</li>
-                        <li>Laboratory Tests</li>
-                        <li>Pharmacy</li>
-                        <li>Diagnostics</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-base font-bold mb-4 text-slate-300">Contact Us</h4>
-                    <ul class="space-y-3 text-slate-400 text-sm">
-                        <li class="flex items-start gap-2"><span>📍</span><span>123 Medical Center Drive<br>VIT Campus, Vellore<br>Tamil Nadu - 632014</span></li>
-                        <li class="flex items-center gap-2"><span>📞</span><span>+91 416-220-2000</span></li>
-                        <li class="flex items-center gap-2"><span>✉️</span><span>info@healthcareplus.com</span></li>
-                        <li class="flex items-center gap-2"><span>🕒</span><span>24/7 Emergency Services</span></li>
-                    </ul>
+
+                <!-- Admin Card -->
+                <div class="feature-card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center text-xl font-bold mb-4">
+                            🏥
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Hospital Administration</h3>
+                        <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                            Operational oversight: bed occupancy by ward, staff allocations, doctor onboarding, and patient feedback.
+                        </p>
+                        <ul class="text-sm text-slate-600 space-y-2 mb-6">
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Onboard doctors &amp; manage roster</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Real-time ward occupancy tracking</li>
+                            <li class="flex items-center gap-2"><span class="text-blue-600 font-bold">✓</span> Staff directory &amp; feedback audit</li>
+                        </ul>
+                    </div>
+                    <button onclick="selectRole('admin'); showLogin();" class="btn-outline w-full py-2.5 text-sm">
+                        Admin Sign In
+                    </button>
                 </div>
             </div>
-            <div class="border-t border-slate-800 mt-10 pt-8 text-center text-slate-500 text-sm">
-                <p>&copy; 2026 HealthCare+ Hospital Management System. All rights reserved.</p>
-                <p class="mt-2">Built with 🖥️ IBM Mainframe — DB2 · COBOL · JCL · z/OS | VIT University</p>
+        </div>
+    </section>
+
+    <!-- Clinical Specialties & Hospital Departments Section -->
+    <section class="py-14 bg-slate-50 border-b border-slate-200">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-10">
+                <span class="badge-pill mb-2 inline-block">Clinical Services</span>
+                <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Comprehensive Medical Specialties</h2>
+                <p class="text-sm text-slate-500 mt-1">World-class specialized healthcare provided across fully equipped hospital departments.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        ❤️
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">Cardiology &amp; Vascular Care</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Comprehensive cardiac diagnostics, interventional cardiology, stress testing, and post-cardiac rehabilitation programs.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        🧠
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">Neurology &amp; Neurosurgery</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Specialized care for neurological disorders, stroke prevention, epilepsy management, and advanced neuro-diagnostics.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        🦴
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">Orthopedics &amp; Sports Medicine</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Joint replacement, fracture treatment, spinal care, and physical therapy rehabilitation for musculoskeletal health.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        👶
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">Pediatrics &amp; Child Health</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Compassionate pediatric outpatient consultations, newborn care, immunization regimens, and adolescent medicine.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        🏥
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">Intensive Care &amp; Inpatient Wards</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        State-of-the-art ICU monitoring, private inpatient recovery rooms, dedicated maternity care, and pediatric wards.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200">
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xl mb-3">
+                        🚑
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-base mb-1">24/7 Emergency &amp; Trauma Care</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Rapid emergency triage, advanced trauma resuscitation suites, 24/7 diagnostic labs, and urgent care clinics.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Hospital Footer -->
+    <footer class="mt-auto bg-white border-t border-slate-200 text-slate-600 py-8">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+            <div>
+                <span class="font-bold text-slate-800 text-sm">HealthCare+ Hospital Center</span>
+                <span class="mx-2 text-slate-300">|</span>
+                <span>Accredited Healthcare Provider</span>
+            </div>
+            <div class="flex items-center gap-6 text-slate-500">
+                <span>Emergency: <strong>(800) 555-CARE</strong></span>
+                <span>Appointments: <strong>(800) 555-APPT</strong></span>
+                <span>Hours: <strong>24/7 Emergency · Mon-Sat 8AM-8PM</strong></span>
+            </div>
+            <div class="text-slate-400">
+                &copy; 2026 HealthCare+ All rights reserved.
             </div>
         </div>
     </footer>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50">
-        <div class="modal-card rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
+    <div id="loginModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4">
+        <div class="modal-card rounded-lg p-6 max-w-md w-full shadow-xl">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
                 <div>
-                    <h2 class="text-2xl font-bold text-white">Sign In</h2>
-                    <p class="text-xs text-violet-400 mt-1 font-mono">HMSAUTH: LOGIN-*-PARA → DB2</p>
+                    <h2 class="text-xl font-bold text-slate-900">Sign In</h2>
+                    <p class="text-xs text-slate-500">Access your hospital portal</p>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-3xl leading-none transition">&times;</button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-semibold mb-3 text-slate-300">Select Role</label>
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Select Your Role</label>
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectRole('patient')" id="role-patient" class="role-btn px-3 py-2 text-sm font-semibold">Patient</button>
-                    <button onclick="selectRole('doctor')" id="role-doctor" class="role-btn px-3 py-2 text-sm font-semibold">Doctor</button>
-                    <button onclick="selectRole('admin')" id="role-admin" class="role-btn px-3 py-2 text-sm font-semibold">Admin</button>
+                    <button type="button" onclick="selectRole('patient')" id="role-patient" class="role-btn py-2 text-xs">Patient</button>
+                    <button type="button" onclick="selectRole('doctor')" id="role-doctor" class="role-btn py-2 text-xs">Doctor</button>
+                    <button type="button" onclick="selectRole('admin')" id="role-admin" class="role-btn py-2 text-xs">Admin</button>
                 </div>
             </div>
 
             <form onsubmit="handleLogin(event)">
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Email / Username</label>
-                    <input type="text" id="loginEmail" required class="form-input w-full px-4 py-3">
+                    <label id="loginUserLabel" class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="text" id="loginEmail" required class="form-input w-full px-3.5 py-2.5 text-sm" placeholder="user@hospital.com">
                 </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Password</label>
+                <div class="mb-5">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-semibold text-slate-700">Password</label>
+                    </div>
                     <div class="relative">
-                        <input type="password" id="loginPassword" required minlength="6" class="form-input w-full px-4 py-3 pr-12">
-                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-300 transition">
-                            <span id="loginEye">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </span>
+                        <input type="password" id="loginPassword" required minlength="6" class="form-input w-full px-3.5 py-2.5 text-sm pr-10" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <span id="loginEye">👁️</span>
                         </button>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Minimum 6 characters</p>
                 </div>
-                <div id="loginError" class="hidden mb-4 p-3 bg-red-900/40 border border-red-700 text-red-300 rounded-xl text-sm"></div>
-                <button type="submit" id="login-submit-btn" class="btn-primary w-full py-3 text-base">Sign In</button>
+                <div id="loginError" class="hidden mb-4 p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-md text-xs"></div>
+                <button type="submit" id="login-submit-btn" class="btn-primary w-full py-2.5 text-sm">
+                    Sign In
+                </button>
             </form>
-            <p class="mt-4 text-center text-sm text-slate-400">
-                Don't have an account?
-                <button onclick="showRegisterFromLogin()" class="text-violet-400 font-semibold hover:underline">Register here</button>
-            </p>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 text-center text-xs text-slate-500">
+                New patient?
+                <button onclick="showRegister()" class="text-blue-700 hover:underline font-semibold ml-1">
+                    Register an account
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Register Modal -->
-    <div id="registerModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50">
-        <div class="modal-card rounded-2xl p-8 max-w-md w-full mx-4 max-h-screen overflow-y-auto shadow-2xl">
-            <div class="flex justify-between items-center mb-6">
+    <div id="registerModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50 p-4">
+        <div class="modal-card rounded-lg p-6 max-w-md w-full shadow-xl">
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
                 <div>
-                    <h2 class="text-2xl font-bold text-white">Patient Registration</h2>
-                    <p class="text-xs text-violet-400 mt-1 font-mono">HMSAUTH: PROCESS-REGISTER-PARA → DB2</p>
+                    <h2 class="text-xl font-bold text-slate-900">Patient Registration</h2>
+                    <p class="text-xs text-slate-500">Create your personal health account</p>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-3xl leading-none transition">&times;</button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">&times;</button>
             </div>
 
-            <form onsubmit="handleRegister(event)">
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Full Name</label>
-                    <input type="text" id="regName" required class="form-input w-full px-4 py-3">
+            <form onsubmit="handleRegister(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="regName" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="John Doe">
                 </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Age</label>
-                        <input type="number" id="regAge" required min="1" max="120" class="form-input w-full px-4 py-3">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Age</label>
+                        <input type="number" id="regAge" required min="1" max="120" class="form-input w-full px-3.5 py-2 text-sm" placeholder="30">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold mb-2 text-slate-300">Gender</label>
-                        <select id="regGender" required class="form-input w-full px-4 py-3">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Gender</label>
+                        <select id="regGender" required class="form-input w-full px-3.5 py-2 text-sm">
                             <option value="">Select</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -314,35 +419,37 @@
                         </select>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Contact Number</label>
-                    <input type="tel" id="regContact" required class="form-input w-full px-4 py-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Contact Phone</label>
+                    <input type="tel" id="regContact" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="555-0199">
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Email</label>
-                    <input type="email" id="regEmail" required class="form-input w-full px-4 py-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="regEmail" required class="form-input w-full px-3.5 py-2 text-sm" placeholder="patient@email.com">
                 </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold mb-2 text-slate-300">Password</label>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
                     <div class="relative">
-                        <input type="password" id="regPassword" required class="form-input w-full px-4 py-3 pr-12">
-                        <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-300 transition">
-                            <span id="regEye">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </span>
+                        <input type="password" id="regPassword" required minlength="6" class="form-input w-full px-3.5 py-2 text-sm pr-10" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEye')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <span id="regEye">👁️</span>
                         </button>
                     </div>
                 </div>
-                <div id="registerError" class="hidden mb-4 p-3 bg-red-900/40 border border-red-700 text-red-300 rounded-xl text-sm"></div>
-                <button type="submit" id="register-submit-btn" class="btn-primary w-full py-3 text-base">Create Account</button>
+                <div id="registerError" class="hidden p-2.5 bg-red-50 border border-red-200 text-red-700 rounded-md text-xs"></div>
+                <div class="pt-2">
+                    <button type="submit" id="reg-submit-btn" class="btn-primary w-full py-2.5 text-sm">
+                        Complete Registration
+                    </button>
+                </div>
             </form>
-            <p class="mt-4 text-center text-sm text-slate-400">
-                Already have an account?
-                <button onclick="showLoginFromRegister()" class="text-violet-400 font-semibold hover:underline">Login here</button>
-            </p>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 text-center text-xs text-slate-500">
+                Already registered?
+                <button onclick="showLogin()" class="text-blue-700 hover:underline font-semibold ml-1">
+                    Sign In
+                </button>
+            </div>
         </div>
     </div>
 
@@ -350,27 +457,35 @@
         const API_URL = 'http://localhost:8080/api';
         let selectedRole = 'patient';
 
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            const targetBtn = document.getElementById(`role-${role}`);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const label = document.getElementById('loginUserLabel');
+            const emailInput = document.getElementById('loginEmail');
+            if (label && emailInput) {
+                if (role === 'admin') {
+                    label.textContent = 'Username';
+                    emailInput.placeholder = 'admin';
+                } else {
+                    label.textContent = 'Email Address';
+                    emailInput.placeholder = role === 'doctor' ? 'doctor@hospital.com' : 'patient@email.com';
+                }
+            }
+        }
+
         function closeModal() {
             document.getElementById('loginModal').classList.add('hidden');
             document.getElementById('registerModal').classList.add('hidden');
         }
 
-        function showLoginFromRegister() { showLogin(); }
-        function showRegisterFromLogin() { showRegister(); }
-
-        function selectRole(role) {
-            selectedRole = role;
-            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`role-${role}`).classList.add('active');
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').classList.add('hidden');
-        }
-
         async function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
+
             try {
                 const response = await fetch(`${API_URL}/login`, {
                     method: 'POST',
@@ -378,28 +493,30 @@
                     body: JSON.stringify({ email, password, role: selectedRole })
                 });
                 const data = await response.json();
+
                 if (data.success) {
                     sessionStorage.setItem('user', JSON.stringify(data.user));
-                    sessionStorage.setItem('role', data.role);
+                    sessionStorage.setItem('role', selectedRole);
+
                     if (selectedRole === 'patient') window.location.href = 'patient.html';
                     else if (selectedRole === 'doctor') window.location.href = 'doctor.html';
                     else if (selectedRole === 'admin') window.location.href = 'admin.html';
                 } else {
-                    showError('loginError', data.error || 'Login failed');
+                    showError('loginError', data.error || 'Invalid credentials');
                 }
             } catch (error) {
-                showError('loginError', 'Connection error. Ensure the server is running on port 8080.');
+                showError('loginError', 'Cannot connect to server. Please try again.');
             }
         }
 
         async function handleRegister(event) {
             event.preventDefault();
             const data = {
-                name: document.getElementById('regName').value,
-                age: parseInt(document.getElementById('regAge').value),
+                name: document.getElementById('regName').value.trim(),
+                age: parseInt(document.getElementById('regAge').value, 10),
                 gender: document.getElementById('regGender').value,
-                contact: document.getElementById('regContact').value,
-                email: document.getElementById('regEmail').value,
+                contact: document.getElementById('regContact').value.trim(),
+                email: document.getElementById('regEmail').value.trim(),
                 password: document.getElementById('regPassword').value
             };
             try {
@@ -410,7 +527,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Registration successful! You can now login.');
+                    alert('Registration successful! You may now sign in.');
                     event.target.reset();
                     showLogin();
                 } else {
@@ -449,14 +566,17 @@
             document.getElementById('loginError').classList.add('hidden');
         }
 
-        // Initialize
+        // Initialize with Patient role selected
         selectRole('patient');
 
-        // Close modals on backdrop click
+        // Close modal when clicking backdrop
         ['loginModal', 'registerModal'].forEach(id => {
-            document.getElementById(id).addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('click', function(e) {
+                    if (e.target === this) closeModal();
+                });
+            }
         });
     </script>
 </body>

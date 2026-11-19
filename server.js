@@ -15,6 +15,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const Db2Client = require('./db2Client');
@@ -35,6 +36,9 @@ const T = {
     STAFF: `${SCHEMA}.HMS_STAFF`,
     BILLING: `${SCHEMA}.HMS_BILLING`,
     FEEDBACK: `${SCHEMA}.HMS_FEEDBACK`,
+    RLS_POLICIES: `${SCHEMA}.HMS_RLS_POLICIES`,
+    V_RLS_POLICIES: `${SCHEMA}.V_RLS_POLICIES`,
+    V_DOC_TREATED_PATIENTS: `${SCHEMA}.V_DOC_TREATED_PATIENTS`,
 };
 
 const db = new Db2Client();
@@ -82,29 +86,38 @@ app.post('/api/login', async (req, res) => {
         let row;
         if (role === 'patient') {
             row = await db.queryOne(
-                `SELECT PATIENT_ID AS id, PAT_NAME AS name, PAT_EMAIL AS email
+                `SELECT PATIENT_ID AS id, PAT_NAME AS name, PAT_EMAIL AS email, PAT_PASSWORD AS password
                  FROM ${T.PATIENTS}
-                 WHERE PAT_EMAIL = ? AND PAT_PASSWORD = ?`,
-                [email, password]
+                 WHERE PAT_EMAIL = ?`,
+                [email]
             );
-            if (row) return res.json({ success: true, role: 'patient', user: row });
+            if (row && (bcrypt.compareSync(password, row.password) || row.password === password)) {
+                delete row.password;
+                return res.json({ success: true, role: 'patient', user: row });
+            }
         } else if (role === 'doctor') {
             row = await db.queryOne(
-                `SELECT DOCTOR_ID AS id, DOC_NAME AS name, DOC_EMAIL AS email,
+                `SELECT DOCTOR_ID AS id, DOC_NAME AS name, DOC_EMAIL AS email, DOC_PASSWORD AS password,
                         SPECIALIZ AS specialization, DEPARTMENT AS department
                  FROM ${T.DOCTORS}
-                 WHERE DOC_EMAIL = ? AND DOC_PASSWORD = ? AND DOC_STATUS = 'ACTIVE'`,
-                [email, password]
+                 WHERE DOC_EMAIL = ? AND DOC_STATUS = 'ACTIVE'`,
+                [email]
             );
-            if (row) return res.json({ success: true, role: 'doctor', user: row });
+            if (row && (bcrypt.compareSync(password, row.password) || row.password === password)) {
+                delete row.password;
+                return res.json({ success: true, role: 'doctor', user: row });
+            }
         } else if (role === 'admin') {
             row = await db.queryOne(
-                `SELECT ADMIN_ID AS id, ADM_USERNAME AS username
+                `SELECT ADMIN_ID AS id, ADM_USERNAME AS username, ADM_PASSWORD AS password
                  FROM ${T.ADMIN}
-                 WHERE ADM_USERNAME = ? AND ADM_PASSWORD = ?`,
-                [email, password]
+                 WHERE ADM_USERNAME = ?`,
+                [email]
             );
-            if (row) return res.json({ success: true, role: 'admin', user: row });
+            if (row && (bcrypt.compareSync(password, row.password) || row.password === password)) {
+                delete row.password;
+                return res.json({ success: true, role: 'admin', user: row });
+            }
         } else {
             return res.json({ success: false, error: 'Invalid role' });
         }
@@ -118,11 +131,12 @@ app.post('/api/login', async (req, res) => {
 app.post('/api/register', async (req, res) => {
     const { name, age, gender, contact, email, password } = req.body;
     try {
+        const hashedPassword = bcrypt.hashSync(password, 10);
         const result = await db.insert(
             `INSERT INTO ${T.PATIENTS}
                 (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
              VALUES (?, ?, ?, ?, ?, ?)`,
-            [name, parseInt(age, 10), gender, contact, email, password]
+            [name, parseInt(age, 10), gender, contact, email, hashedPassword]
         );
         res.json({ success: true, patient_id: result.insertId });
     } catch (err) {
@@ -144,7 +158,7 @@ app.get('/api/doctors', async (req, res) => {
         const rows = await db.query(
             `SELECT DOCTOR_ID AS id, DOC_NAME AS name,
                     SPECIALIZ AS specialization, DEPARTMENT AS department,
-                    DOC_CONTACT AS contact
+                    DOC_CONTACT AS contact, DOC_EMAIL AS email, DOC_STATUS AS status
              FROM ${T.DOCTORS}
              WHERE DOC_STATUS = 'ACTIVE'
              ORDER BY SPECIALIZ, DOC_NAME`
@@ -154,6 +168,32 @@ app.get('/api/doctors', async (req, res) => {
         res.json({ error: err.message });
     }
 });
+
+// POST /api/doctor/add  -> Admin Add Doctor
+const handleAddDoctor = async (req, res) => {
+    const { name, specialization, department, contact, email, password } = req.body;
+    if (!name || !specialization || !department || !email) {
+        return res.json({ success: false, error: 'Name, specialization, department, and email are required.' });
+    }
+    try {
+        const hashedPassword = bcrypt.hashSync(password || 'doc123', 10);
+        const result = await db.insert(
+            `INSERT INTO ${T.DOCTORS}
+                (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT, DOC_STATUS)
+             VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')`,
+            [name, specialization, email, hashedPassword, department, contact || '']
+        );
+        res.json({ success: true, doctor_id: result.insertId });
+    } catch (err) {
+        if (err.sqlcode === -803 || (err.message && err.message.includes('-803'))) {
+            res.json({ success: false, error: 'Doctor email already registered' });
+        } else {
+            res.json({ success: false, error: err.message });
+        }
+    }
+};
+app.post('/api/doctor/add', handleAddDoctor);
+app.post('/api/doctors/add', handleAddDoctor);
 
 // GET /api/patient/dashboard  -> COBOL HMSAPPT GET-PAT-DASH-PARA
 app.get('/api/patient/dashboard', async (req, res) => {
@@ -248,8 +288,20 @@ app.post('/api/appointment/book', async (req, res) => {
 
 // POST /api/appointment/update  -> COBOL HMSAPPT UPDATE-APPT-PARA
 app.post('/api/appointment/update', async (req, res) => {
-    const { appointment_id, status, notes } = req.body;
+    const { appointment_id, status, notes, doctor_id } = req.body;
     try {
+        if (doctor_id) {
+            const appt = await db.queryOne(
+                `SELECT DOCTOR_ID FROM ${T.APPOINTMENTS} WHERE APPT_ID = ?`,
+                [parseInt(appointment_id, 10)]
+            );
+            if (appt && appt.doctor_id !== parseInt(doctor_id, 10)) {
+                return res.json({
+                    success: false,
+                    error: `RLS Access Denied: Doctor #${doctor_id} cannot modify appointment assigned to Doctor #${appt.doctor_id}`
+                });
+            }
+        }
         await db.exec(
             `UPDATE ${T.APPOINTMENTS}
              SET APPT_STATUS = ?, APPT_NOTES = ?
@@ -309,6 +361,19 @@ app.get('/api/doctor/profile', async (req, res) => {
 app.post('/api/prescription/add', async (req, res) => {
     const { appointment_id, patient_id, doctor_id, medicine, dosage, duration, diagnosis, notes } = req.body;
     try {
+        // RLS Verification: Ensure the appointment is assigned to this doctor
+        if (doctor_id && appointment_id) {
+            const appt = await db.queryOne(
+                `SELECT APPT_ID, PATIENT_ID, DOCTOR_ID FROM ${T.APPOINTMENTS} WHERE APPT_ID = ?`,
+                [parseInt(appointment_id, 10)]
+            );
+            if (appt && appt.doctor_id !== parseInt(doctor_id, 10)) {
+                return res.json({
+                    success: false,
+                    error: `RLS Access Denied: Doctor #${doctor_id} is not assigned to Appointment #${appointment_id}`
+                });
+            }
+        }
         const result = await db.insert(
             `INSERT INTO ${T.PRESCRIPTIONS}
                 (APPT_ID, PATIENT_ID, DOCTOR_ID, MEDICINE, DOSAGE, DURATION, DIAGNOSIS, PRESC_NOTES)
@@ -327,6 +392,116 @@ app.post('/api/prescription/add', async (req, res) => {
         res.json({ success: true, prescription_id: result.insertId });
     } catch (err) {
         res.json({ success: false, error: err.message });
+    }
+});
+
+// ================================================================
+// ROW-LEVEL SECURITY (RLS) POLICIES & ROLE-FILTERED ACCESS
+// ================================================================
+
+// GET /api/doctor/patients -> RLS: Doctor can see only patients who they have treated previously
+app.get('/api/doctor/patients', async (req, res) => {
+    const doctorId = parseInt(req.query.doctor_id, 10);
+    if (!doctorId) {
+        return res.json({ error: 'doctor_id parameter is required for RLS validation.' });
+    }
+    try {
+        const rows = await db.query(
+            `SELECT PATIENT_ID AS id,
+                    PAT_NAME AS name,
+                    PAT_AGE AS age,
+                    PAT_GENDER AS gender,
+                    PAT_CONTACT AS contact,
+                    PAT_EMAIL AS email,
+                    CHAR(LAST_CONSULTATION, ISO) AS last_consultation
+             FROM ${T.V_DOC_TREATED_PATIENTS}
+             WHERE DOCTOR_ID = ?
+             ORDER BY LAST_CONSULTATION DESC, PAT_NAME ASC`,
+            [doctorId]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json({ error: err.message });
+    }
+});
+
+// GET /api/admin/patients -> RLS: Admin can see all patients
+app.get('/api/admin/patients', async (req, res) => {
+    try {
+        const rows = await db.query(
+            `SELECT PATIENT_ID AS id,
+                    PAT_NAME AS name,
+                    PAT_AGE AS age,
+                    PAT_GENDER AS gender,
+                    PAT_CONTACT AS contact,
+                    PAT_EMAIL AS email,
+                    CHAR(CREATED_AT) AS registered_at
+             FROM ${T.PATIENTS}
+             ORDER BY PATIENT_ID ASC`
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json({ error: err.message });
+    }
+});
+
+// GET /api/admin/appointments -> RLS: Admin can see all appointments across all doctors
+app.get('/api/admin/appointments', async (req, res) => {
+    try {
+        const rows = await db.query(
+            `SELECT A.APPT_ID AS id,
+                    CHAR(A.APPT_DATE, ISO) AS date,
+                    CHAR(A.APPT_TIME, JIS) AS time,
+                    A.APPT_STATUS AS status,
+                    A.APPT_NOTES AS notes,
+                    A.PATIENT_ID AS patient_id,
+                    P.PAT_NAME AS patient_name,
+                    A.DOCTOR_ID AS doctor_id,
+                    D.DOC_NAME AS doctor_name,
+                    D.SPECIALIZ AS specialization
+             FROM ${T.APPOINTMENTS} A
+             JOIN ${T.PATIENTS} P ON A.PATIENT_ID = P.PATIENT_ID
+             JOIN ${T.DOCTORS} D ON A.DOCTOR_ID = D.DOCTOR_ID
+             ORDER BY A.APPT_DATE DESC, A.APPT_TIME DESC`
+        );
+        res.json(rows);
+    } catch (err) {
+        res.json({ error: err.message });
+    }
+});
+
+// GET /api/rls/policies -> Query RLS policies from Db2 V_RLS_POLICIES and SYSCONTROLS
+app.get('/api/rls/policies', async (req, res) => {
+    try {
+        const rows = await db.query(
+            `SELECT POLICY_ID AS id,
+                    POLICY_NAME AS name,
+                    TARGET_TABLE AS table,
+                    TARGET_ROLE AS role,
+                    POLICY_TYPE AS type,
+                    RULE_FILTER AS filter,
+                    ENFORCED AS enforced,
+                    STATUS AS status,
+                    DESCRIPTION AS description,
+                    CREATED_AT AS created_at
+             FROM ${T.V_RLS_POLICIES}
+             ORDER BY POLICY_ID`
+        );
+        let syscontrolsCount = 0;
+        try {
+            const sc = await db.queryOne(`SELECT COUNT(*) AS CNT FROM SYSIBM.SYSCONTROLS WHERE TBSCHEMA = ?`, [SCHEMA]);
+            syscontrolsCount = sc.cnt || sc.CNT || 0;
+        } catch (_) {}
+        res.json({
+            success: true,
+            total_policies: rows.length,
+            syscontrols_catalog_entries: syscontrolsCount,
+            db2_subsystem: process.env.DB2_SUBSYSTEM || 'DBDG',
+            schema: SCHEMA,
+            policies: rows
+        });
+    } catch (err) {
+        res.json({ success: false, error: err.message, policies: [] });
     }
 });
 

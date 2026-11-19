@@ -246,38 +246,82 @@ CREATE VIEW Z72385.V_HMS_FDBK_DETAIL AS
     JOIN Z72385.HMS_PATIENTS P ON F.PATIENT_ID = P.PATIENT_ID;
 
 -- ============================================================
--- INITIAL SEED DATA
+-- INITIAL SEED DATA (PASSWORDS ENCRYPTED WITH BCRYPT)
 -- ============================================================
 INSERT INTO Z72385.HMS_ADMIN (ADM_USERNAME, ADM_PASSWORD)
-    VALUES ('admin', 'admin123');
+    VALUES ('admin',
+    '$2b$10$vw9CrzGqvGMRswePgqbNkOIsppqAAcQ4KhyaFW5i3XRAzS.ir3sZC');
 
 INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
-    VALUES ('ICU', 20, 5);
+    VALUES ('ICU', 20, 8);
 INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
-    VALUES ('GENERAL', 50, 15);
+    VALUES ('GENERAL', 50, 22);
 INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
-    VALUES ('EMERGENCY', 30, 10);
+    VALUES ('EMERGENCY', 30, 14);
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('PEDIATRIC', 25, 8);
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('SURGICAL', 35, 15);
+INSERT INTO Z72385.HMS_WARDS (WARD_TYPE, TOTAL_BEDS, OCCPD_BEDS)
+    VALUES ('MATERNITY', 20, 6);
 
 INSERT INTO Z72385.HMS_DOCTORS
     (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
     VALUES ('Dr. Sarah Johnson', 'Cardiology', 'sarah@hospital.com',
-            'doc123', 'Cardiology', '555-0101');
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Cardiology', '555-0101');
 INSERT INTO Z72385.HMS_DOCTORS
     (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
     VALUES ('Dr. Michael Chen', 'Orthopedics', 'michael@hospital.com',
-            'doc123', 'Orthopedics', '555-0102');
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Orthopedics', '555-0102');
 INSERT INTO Z72385.HMS_DOCTORS
     (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
     VALUES ('Dr. Emily Rodriguez', 'Neurology', 'emily@hospital.com',
-            'doc123', 'Neurology', '555-0103');
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Neurology', '555-0103');
 INSERT INTO Z72385.HMS_DOCTORS
     (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
     VALUES ('Dr. James Wilson', 'Pediatrics', 'james@hospital.com',
-            'doc123', 'Pediatrics', '555-0104');
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Pediatrics', '555-0104');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Olivia Bennett', 'Oncology', 'olivia@hospital.com',
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Oncology', '555-0105');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Robert Taylor', 'General Surgery', 'robert@hospital.com',
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Surgery', '555-0106');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. Priya Sharma', 'Dermatology', 'priya@hospital.com',
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Dermatology', '555-0107');
+INSERT INTO Z72385.HMS_DOCTORS
+    (DOC_NAME, SPECIALIZ, DOC_EMAIL, DOC_PASSWORD, DEPARTMENT, DOC_CONTACT)
+    VALUES ('Dr. David Kim', 'Radiology', 'david@hospital.com',
+    '$2b$10$ffpJnrZpKeoec9oNSLGB3uIQd19pfknulNNxKvQ7q0F9sRLBVUuaq',
+    'Radiology', '555-0108');
 
 INSERT INTO Z72385.HMS_PATIENTS
     (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
-    VALUES ('John Doe', 35, 'Male', '555-1234', 'john@email.com', 'patient123');
+    VALUES ('John Doe', 35, 'Male', '555-1234', 'john@email.com',
+    '$2b$10$Vovy97q3Iblr6RNwsZyaX.T80SysCDOC8FvqF3Ots3bOduAJvvl1i');
+INSERT INTO Z72385.HMS_PATIENTS
+    (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
+    VALUES ('Maria Garcia', 42, 'Female', '555-2345', 'maria@email.com',
+    '$2b$10$Vovy97q3Iblr6RNwsZyaX.T80SysCDOC8FvqF3Ots3bOduAJvvl1i');
+INSERT INTO Z72385.HMS_PATIENTS
+    (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
+    VALUES ('Robert Davis', 67, 'Male', '555-3456', 'robert.d@email.com',
+    '$2b$10$Vovy97q3Iblr6RNwsZyaX.T80SysCDOC8FvqF3Ots3bOduAJvvl1i');
+INSERT INTO Z72385.HMS_PATIENTS
+    (PAT_NAME, PAT_AGE, PAT_GENDER, PAT_CONTACT, PAT_EMAIL, PAT_PASSWORD)
+    VALUES ('Sophia Lee', 28, 'Female', '555-4567', 'sophia@email.com',
+    '$2b$10$Vovy97q3Iblr6RNwsZyaX.T80SysCDOC8FvqF3Ots3bOduAJvvl1i');
 
 INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
     VALUES ('Alice Brown', 'Nurse', '555-2001', 'Cardiology');
@@ -285,3 +329,9 @@ INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
     VALUES ('Bob Smith', 'Nurse', '555-2002', 'Emergency');
 INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
     VALUES ('Carol Davis', 'Receptionist', '555-2003', 'Reception');
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('David Miller', 'Lab Technician', '555-2004', 'Pathology');
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('Emma Watson', 'Pharmacist', '555-2005', 'Pharmacy');
+INSERT INTO Z72385.HMS_STAFF (STF_NAME, STF_ROLE, STF_CONTACT, STF_DEPT)
+    VALUES ('Grace Hopper', 'Head Nurse', '555-2007', 'ICU');
